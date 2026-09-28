@@ -2,11 +2,17 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
 <title>Balatro</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bungee&family=M+PLUS+Rounded+1c:wght@500;700;800;900&family=Silkscreen:wght@400;700&display=swap" rel="stylesheet">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Balatro">
+<meta name="format-detection" content="telephone=no">
+<link rel="apple-touch-icon" href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAIAAACyr5FlAAAEZUlEQVR4nO3WPU4cQRCG4cIiQUKE5IQIcQNu41P4BD6Fb8MNCLgDMRKJAwdtDcvOfsvszk9VV71PZieu7X67xhc3D3cGHPLDewDERRyQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHJOKARByQiAMScUAiDkjEAYk4IBEHpEvvAaTb9w/vEbbzdn3lPcIB4eIo1cRg+NWhKon1WalZxq5QJxBlc4Q6FF/tKCKskBCbgzLGIpyJ/+ZQp/D68rzxJI7uH5/Gf3n7/uG7P/zjGCuVRdN+8sFEHDl/VsZro2AZg/Fv9/24eMZBGWOh+gjxH9KGMpo45xAoDkTjFsfetozzXCLYOw2vLwubAxJxQCIOSMQBiTggEQck4oBEHJCIAxJxQCIOSMQBiTggEccXlz9/eY8QCHF8amXQx4A4IBHHf7sLg+XREIfZoRrow4jDdAf0QRyQqsdxfD0UXx6l45hy95X7qBvH9Fsv20fdOPCtonGcugxqLo+KcZx30wX7KBfHnDuu1ke5ODBdrTjmP/1Sy6NQHEvda50+qsSx7I0W6aNKHDhDiTjWeOgVlkf+ONa7xfR9JI9j7fvL3UfyODBH5ji2edaJl0faOLa8s6x95Ixj+9tK2UfOOLCIhHF4PeJ8yyNbHL43lKyPVHFEuJsIMywlVRxYVp444jzZOJPMlCSOaPcRbZ7zZIgj5k3EnOokGeLASrqPI/IDjTzbFH3HEf/04094RMdx9HLuvcw51nEcWFuvcfT1HPuadtBlHD2edY8zdxnH3z+/vUc4WY8zdxmH9XbWfU076DUObKDjOHp5jr3MOdZxHNbDucef8Ii+47DYpx95tim6jwPryRBHzAcac6qTZIjD4t1EtHnOkyQOi3QfcSaZKU8cWFyqOCI82QgzLCVVHOZ9N5nKsHxxmN8NJSvDUsaBpeSMY/tHnG9tWNY4bNvbSlmGJY7DtrqzrGVY7jgwU/I41n7WideGpY/D1ry/3GVYhThsnVtMX4YViQPnqRLHsg+9wtqwOnHYcjdapAwrFYctca91yrBqceAk5eKY8/RLrQ0rGIede8fVyrCacdjpN12wDCsbB6aoG8f0ZVBzbVjlOGzarZctw4rHYd/dfeUyjDhwBHHI9VB8bRhxNOMOKMOIY7BbA2U0xAGJOD61hcHaGBDHF5SxizggEQck4oBEHJCIAxJxQCIOSMQBiTggEQck4oBEHJCIA5JbHG/XV7t/vH988pokoL3T2DurzbA5IAWKg+XRxDkHzzjG2zLOuXgZn4DXN8XcNwd97ApVhpldOv7bSjuj15dn70G2E/NJXNw83HnPYLfvH94jROS7Nsz9s9K4n0JAEc4kymelnQUrxGJk0YTYHIM45+Il1AlE2RyD4XRKbZFQTQzCxTGIeV6lxPqsIBTigEQckIgDEnFAIg5IxAGJOCARByTigEQckIgDEnFAIg5IxAGJOCARByTigEQckIgDEnFAIg5IxAHpHxTKGTwjnof0AAAAAElFTkSuQmCC">
 <meta name="theme-color" content="#0a1712">
 
 <style>
@@ -51,7 +57,7 @@
       radial-gradient(circle at 50% 30%, var(--table-1), var(--table-2) 75%);
   }
   #app {
-    width: 100%; height: 100dvh; max-width: 500px; margin: 0 auto;
+    width: 100%; height: 100%; max-width: 500px; margin: 0 auto;
     display: flex; flex-direction: column; position: relative;
     background: linear-gradient(175deg, var(--felt-1) 0%, var(--felt-2) 55%, #081c15 100%);
     border-radius: 26px; overflow: hidden;
@@ -77,7 +83,7 @@
     transition: transform 0.08s var(--lerp), box-shadow 0.08s var(--lerp), filter 0.15s;
     position: relative;
   }
-  button:hover { filter: brightness(1.08); }
+  @media (hover:hover){button:hover{filter:brightness(1.08);}}
   button:active { transform: translateY(4px); box-shadow: 0 0 0 #12291f, 0 2px 4px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.12); }
   button:disabled { opacity: 0.4; filter: grayscale(0.6); cursor: default; transform: none !important; }
   button.primary { background: linear-gradient(180deg, #ffe08a, #f5b93c); color: #4a2c05; box-shadow: 0 4px 0 var(--gold-dark), 0 6px 12px rgba(181,118,15,0.4), inset 0 1px 0 rgba(255,255,255,0.5); }
@@ -411,7 +417,7 @@ button.primary { position:relative; overflow:hidden; }
 button.primary::before { content:''; position:absolute; top:0; left:-60%; width:35%; height:100%;
   background:linear-gradient(115deg,transparent,rgba(255,255,255,0.55),transparent); transform:skewX(-18deg);
   transition:left 0.55s ease; pointer-events:none; }
-button.primary:hover::before { left:130%; }
+@media (hover:hover){button.primary:hover::before{left:130%;}}
 
 .top-bar span:nth-child(2) { animation: money-glow 2.6s ease-in-out infinite; }
 @keyframes money-glow { 0%,100%{ box-shadow: inset 0 1px 0 rgba(255,255,255,0.06), 0 2px 0 rgba(0,0,0,0.25);} 50%{ box-shadow: inset 0 1px 0 rgba(255,255,255,0.1), 0 2px 0 rgba(0,0,0,0.25), 0 0 10px rgba(255,201,74,0.35);} }
@@ -601,111 +607,33 @@ input[type="range"].settings-slider::-moz-range-thumb { width:20px; height:20px;
 @keyframes score-flash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
 
 
-/* ================================================================
-   iOS / TOUCH UX PATCH
-   ================================================================ */
-html, body { width:100%; min-width:0; min-height:100%; touch-action:manipulation; }
-body { padding-left:0; padding-right:0; }
-#app {
-  width:100%; height:100dvh; min-height:0;
-  max-width:520px;
-  border-radius:20px;
+/* ===== iPhone / touch pass ===== */
+html{-webkit-text-size-adjust:100%}
+*{touch-action:manipulation}
+@media (max-width:520px){
+ #app{max-width:none;border-radius:0;box-shadow:none}
+ .modal-overlay{border-radius:0}
+ .settings-fab{top:46px!important}
 }
-button, .card, .joker-slot, .consumable-slot, .blind-card, .carousel-nav, input[type="range"] {
-  touch-action:manipulation;
+.screen{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
+.modal-box{max-height:86%;overflow-y:auto;-webkit-overflow-scrolling:touch}
+.action-btn{min-height:52px}
+.sort-btn{min-width:48px;min-height:48px}
+.hub-btn{min-height:40px}
+.joker-slot,.consumable-slot{min-height:44px}
+.joker-row{-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
+.joker-slot{scroll-snap-align:start}
+.card:active{transform:scale(.96)}
+.hand-container{min-height:120px;padding-bottom:6px}
+.action-row{padding-bottom:4px}
+.move-row{display:flex;gap:8px;margin:0 0 10px}.move-row button{flex:1}
+#toast{position:absolute;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 92px);transform:translateX(-50%);z-index:400;
+ background:rgba(10,20,15,.95);color:var(--cream);border:2px solid var(--gold);border-radius:14px;padding:10px 16px;
+ font-size:.8rem;font-weight:800;text-align:center;max-width:86%;pointer-events:none;animation:fade-in .15s}
+@media (max-height:700px){
+ .joker-row{min-height:68px;padding:4px 6px}.joker-slot{height:60px;min-width:52px}.joker-slot .joker-icon{font-size:1.2rem}
+ .consumable-slot{height:50px}.screen{gap:5px;padding:6px 10px}.hand-container{min-height:104px}
 }
-button { min-height:44px; }
-.settings-fab { min-height:34px; }
-.screen { min-height:0; padding-bottom:calc(10px + env(safe-area-inset-bottom, 0px)); }
-.action-row {
-  position:sticky; bottom:0; z-index:40;
-  padding:7px 0 calc(7px + env(safe-area-inset-bottom,0px));
-  margin:0 -2px;
-  background:linear-gradient(180deg,rgba(14,43,33,0),rgba(8,28,21,.94) 28%);
-}
-.action-btn { min-height:48px; }
-.sort-btn { min-width:44px; min-height:44px; }
-.hub-btn { min-height:42px; }
-.joker-row { scrollbar-width:none; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; }
-.consumable-row { overflow-x:auto; -webkit-overflow-scrolling:touch; overscroll-behavior-x:contain; }
-.shop-rework { padding-bottom:calc(12px + env(safe-area-inset-bottom,0px)); }
-.shop-footer-actions button { min-height:44px; }
-.modal-overlay, .overlay { padding:calc(12px + env(safe-area-inset-top,0px)) 12px calc(12px + env(safe-area-inset-bottom,0px)); }
-.modal-box { max-height:calc(100dvh - 28px); overflow-y:auto; -webkit-overflow-scrolling:touch; }
-.card-picker { -webkit-overflow-scrolling:touch; }
-
-/* iPhone-width layout: prioritize readable controls over decorative spacing. */
-@media (max-width:430px) {
-  #app { max-width:none; width:100%; height:100dvh; border-radius:0; box-shadow:none; }
-  .screen { padding-left:8px; padding-right:8px; gap:6px; }
-  .top-bar { gap:3px; }
-  .top-bar span { padding:5px 6px; font-size:.59rem; flex:1; justify-content:center; }
-  .boss-banner { font-size:.59rem; padding:5px 6px; }
-  .scoring-row { gap:5px; }
-  .preview-box { padding:6px 9px; font-size:.95rem; }
-  .progress-box { padding:4px 9px; }
-  .progress-values { font-size:.84rem; }
-  .joker-row { min-height:76px; padding:5px 4px; }
-  .joker-slot { min-width:56px; height:70px; }
-  .consumable-row { min-height:58px; padding:4px 2px; }
-  .consumable-slot { min-width:50px; height:60px; }
-  .hub-btn-row { gap:5px; }
-  .hand-container { min-height:112px; }
-  .card { width:54px; height:78px; }
-  .card .suit { font-size:1.4rem; }
-  .card .rank { font-size:.88rem; }
-  .action-row { gap:5px; }
-  .action-btn { padding:10px 0; font-size:.82rem; }
-  .sort-btn { width:44px; height:44px; }
-  .shop-grid { gap:6px; }
-  .shop-card { min-height:126px; padding:7px; }
-  .shop-card .shop-card-icon { font-size:1.8rem; }
-  .shop-card .shop-card-name { font-size:.61rem; }
-  .shop-card .shop-card-desc { font-size:.47rem; }
-  .shop-jokers-grid { grid-template-columns:repeat(4,minmax(0,1fr)); }
-  .shop-joker-manage { height:82px; }
-  .shop-footer-actions { grid-template-columns:1fr 1fr 1fr; }
-  .shop-footer-actions button { font-size:.58rem; padding:7px 3px; }
-  .settings-fab { top:calc(env(safe-area-inset-top,0px) + 45px); right:7px; }
-}
-@media (max-width:380px) {
-  .top-bar span { font-size:.54rem; padding:5px 3px; }
-  .preview-box { padding:5px 7px; }
-  .progress-box { padding:4px 7px; }
-  .hand-container { min-height:100px; }
-  .card { width:50px; height:72px; }
-  .card .suit { font-size:1.25rem; }
-  .card .rank { font-size:.82rem; }
-  .joker-slot { min-width:52px; }
-  .blind-card { padding:10px 4px 8px; }
-  .blind-card .blind-icon { font-size:1.55rem; }
-  .blind-card .blind-name { font-size:.59rem; }
-  .blind-card .blind-target { font-size:.9rem; }
-}
-@media (max-height:700px) and (max-width:600px) {
-  .screen { gap:4px; padding-top:6px; }
-  .joker-row { min-height:68px; }
-  .joker-slot { height:62px; }
-  .consumable-row { min-height:52px; }
-  .consumable-slot { height:54px; }
-  .hand-container { min-height:92px; }
-  .hub-btn { padding:6px 0; }
-  .action-row { padding-top:4px; }
-}
-@media (orientation:landscape) and (max-height:600px) {
-  #app { max-width:760px; }
-  .screen { padding-left:12px; padding-right:12px; }
-  .hand-container { min-height:92px; }
-  .joker-row { min-height:68px; }
-}
-@media (hover:hover) {
-  button:hover { filter:brightness(1.08); }
-}
-@media (hover:none) {
-  button:hover { filter:none; }
-  button.primary:hover::before { left:-60%; }
-}
-
 </style>
 </head>
 <body>
@@ -2429,7 +2357,7 @@ function renderGame() {
 
   const cw = Math.min(500, window.innerWidth) - 24;
   const tcw = handSize * 58;
-  const gap = Math.max(4, Math.min((cw - tcw) / Math.max(1, handSize - 1), 16));
+  const gap = Math.max(-32, Math.min((cw - tcw) / Math.max(1, handSize - 1), 16));
   const tw = tcw + gap * Math.max(0, handSize - 1);
   const sx = -tw / 2 + 29;
   const ms = 20, sa = -ms/2, as = handSize > 1 ? ms / (handSize - 1) : 0;
@@ -2496,13 +2424,13 @@ function renderGame() {
         const lift = sel ? -20 : 0;
         const isRedCard = card.suit === '♥' || card.suit === '♦';
         const suitColor = isRedCard ? 'red' : 'black';
-        const xPos = sx + i * (cardW + gap);
+        const xPos = sx + i * (58 + gap);
         // FIXED: face-down cards render as "?"
         const faceDownClass = card.faceDown ? 'face-down' : '';
         const inner = card.faceDown
           ? `<div class="fd-mark">?</div><div class="rank-suit"><span class="rank"></span><span class="suit"></span></div>`
           : `${enh}${seal}<div class="rank-suit"><span class="rank ${suitColor}">${card.rank}</span><span class="suit ${suitColor}">${card.suit}</span></div>`;
-        return `<div class="hand-card-wrapper" data-index="${i}" data-uid="${card.uid}" style="transform: translateX(${xPos}px) rotate(${angle}deg) translateY(${yOffset + lift}px); z-index: ${sel ? 20 : i};">
+        return `<div class="hand-card-wrapper" data-index="${i}" data-uid="${card.uid}" style="transform: translateX(${xPos}px) rotate(${angle}deg) translateY(${yOffset + lift}px); z-index: ${sel ? 20 : i};" onmouseenter="onCardHover(${i})" onmouseleave="onCardLeave()">
           <div class="card ${sel?'selected':''} ${ed} ${card.debuffed?'debuffed':''} ${faceDownClass}" data-suit="${card.faceDown?'':card.suit}" data-rank="${card.faceDown?'':card.rank}" onclick="toggleCard(${i})">
             ${inner}
           </div>
@@ -2547,12 +2475,13 @@ window.onJokerDrop = (e,i) => {
 window.onJokerDragEnd = () => { AppState.draggingJokerIndex = -1; };
 
 window.onCardHover = (index) => {
+  if (!matchMedia("(hover:hover)").matches) return;
   const container = document.getElementById('handContainer'); if (!container) return;
   const wrappers = container.querySelectorAll('.hand-card-wrapper');
   const total = wrappers.length; if (total === 0) return;
   const cw = Math.min(500, window.innerWidth) - 24;
   const tcw = total * 58;
-  const gap = Math.max(4, Math.min((cw - tcw) / Math.max(1, total - 1), 16));
+  const gap = Math.max(-32, Math.min((cw - tcw) / Math.max(1, total - 1), 16));
   const tw = tcw + gap * Math.max(0, total - 1);
   const sx = -tw / 2 + 29;
   const sa = -10, as = total > 1 ? 20 / (total - 1) : 0;
@@ -2564,7 +2493,7 @@ window.onCardHover = (index) => {
     const isH = i === index;
     const el = isH ? -16 : 0;
     const sc = isH ? 1.1 : 1;
-    const xp = sx + i * (cardW + gap);
+    const xp = sx + i * (58 + gap);
     w.style.transform = `translateX(${xp}px) rotate(${na}deg) translateY(${yo + lf + el}px) scale(${sc})`;
     w.style.zIndex = isH ? 50 : (AppState.selectedIndices.has(i) ? 20 : i);
   });
@@ -2575,7 +2504,7 @@ window.onCardLeave = () => {
   const total = wrappers.length; if (total === 0) return;
   const cw = Math.min(500, window.innerWidth) - 24;
   const tcw = total * 58;
-  const gap = Math.max(4, Math.min((cw - tcw) / Math.max(1, total - 1), 16));
+  const gap = Math.max(-32, Math.min((cw - tcw) / Math.max(1, total - 1), 16));
   const tw = tcw + gap * Math.max(0, total - 1);
   const sx = -tw / 2 + 29;
   const sa = -10, as = total > 1 ? 20 / (total - 1) : 0;
@@ -2583,7 +2512,7 @@ window.onCardLeave = () => {
     const a = sa + i * as;
     const yo = Math.abs(a) * 0.6;
     const lf = AppState.selectedIndices.has(i) ? -20 : 0;
-    const xp = sx + i * (cardW + gap);
+    const xp = sx + i * (58 + gap);
     w.style.transform = `translateX(${xp}px) rotate(${a}deg) translateY(${yo + lf}px) scale(1)`;
     w.style.zIndex = AppState.selectedIndices.has(i) ? 20 : i;
   });
@@ -4190,16 +4119,6 @@ window.skipPack = function() {
   renderShop();
 };
 
-window.moveJokerMobile = function(i, dir) {
-  const to = i + dir;
-  if (i < 0 || i >= AppState.jokers.length || to < 0 || to >= AppState.jokers.length) return;
-  const tmp = AppState.jokers[i];
-  AppState.jokers[i] = AppState.jokers[to];
-  AppState.jokers[to] = tmp;
-  SFX.click();
-  document.querySelector('.modal-overlay')?.remove();
-  if (AppState.currentScreen === 'SHOP') renderShop(); else renderGame();
-};
 window.showShopJokerManager = function(i) {
   const j = AppState.jokers[i];
   if (!j) return;
@@ -4221,10 +4140,8 @@ window.showShopJokerManager = function(i) {
         <div class="manage-meta">${d?.rarity || 'Common'} · Sell value $${sell}${j.eternal?' · ETERNAL':''}${j.perishable?' · PERISHABLE':''}${j.rental?' · RENTAL':''}</div>
       </div>
     </div>
-    <div class="manage-actions" style="display:grid;grid-template-columns:1fr 1fr;gap:6px">
-      <button class="small" onclick="moveJokerMobile(${i},-1)">◀ MOVE LEFT</button>
-      <button class="small" onclick="moveJokerMobile(${i},1)">MOVE RIGHT ▶</button>
-      <button class="danger" style="grid-column:1/-1" onclick="sellManagedJoker(${i})" ${j.eternal?'disabled':''}>SELL $${sell}</button>
+    <div class="manage-actions">
+      <button class="danger" onclick="sellManagedJoker(${i})" ${j.eternal?'disabled':''}>SELL $${sell}</button>
     </div>
     <div class="modal-actions" style="margin-top:7px"><button class="small" onclick="this.closest('.modal-overlay').remove()">CLOSE</button></div>
   </div>`;
@@ -4353,7 +4270,7 @@ window.renderShop = function() {
           <span class="joker-pos">${i+1}</span><span class="joker-icon">${AppState.facedownJokers.has(j.uid)?'?':(d.icon||'🃏')}</span>
           <span class="joker-name">${AppState.facedownJokers.has(j.uid)?'Face Down':(d.name||'?')}</span>
           ${!AppState.facedownJokers.has(j.uid) && getJokerCurrentStat(j) ? `<span class="joker-live-stat">${getJokerCurrentStat(j)}</span>` : ''}
-          <span style="font-size:.42rem;opacity:.42;margin-top:3px">TAP TO INSPECT</span>
+          <span style="font-size:.42rem;opacity:.42;margin-top:3px">TAP TO MANAGE</span>
         </div>`;
       }).join('')}</div>`
     : `<div class="shop-empty-slot">NO JOKERS</div>`;
@@ -4364,7 +4281,7 @@ window.renderShop = function() {
     ${section('JOKERS','BUILD YOUR ENGINE',jokerBody)}
     ${section('BOOSTER PACKS','PLAYING CARDS & JOKERS',packBody)}
     ${section('VOUCHERS','ACTIVE THIS ANTE',voucherBody)}
-    <section class="shop-section"><div class="shop-section-head"><span class="shop-section-title">YOUR JOKERS</span><span class="shop-section-sub">DRAG TO REORDER · CLICK TO INSPECT / SELL</span></div>${jokerManage}</section>
+    <section class="shop-section"><div class="shop-section-head"><span class="shop-section-title">YOUR JOKERS</span><span class="shop-section-sub">TAP A JOKER TO INSPECT · MOVE · SELL</span></div>${jokerManage}</section>
     <div class="shop-footer-actions">
       <button onclick="viewDeck()">🃏 DECK</button>
       <button onclick="viewHandLevels()">📊 HAND LEVELS</button>
@@ -5316,6 +5233,38 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
 
 // Initial render
 render();
+
+/* ===== iPhone / touch pass (JS) ===== */
+(function(){
+  function toast(msg){document.getElementById('toast')?.remove();const t=document.createElement('div');t.id='toast';t.textContent=msg;
+    document.getElementById('app')?.appendChild(t);setTimeout(()=>t.remove(),1800);}
+  window.showToast=toast;
+  const redraw=()=>{ (AppState.currentScreen==='SHOP'?renderShop:renderGame)(); };
+  window.moveJoker=(i,d)=>{const j=i+d;if(j<0||j>=AppState.jokers.length){toast(d<0?'Already first':'Already last');return;}
+    const a=AppState.jokers;[a[i],a[j]]=[a[j],a[i]];document.querySelectorAll('.modal-overlay').forEach(m=>m.remove());redraw();
+    toast('Moved '+(d<0?'left':'right')+' — order affects scoring');};
+  function addMove(orig){return function(i){orig.apply(this,arguments);
+    const m=[...document.querySelectorAll('.modal-overlay')].pop();const acts=m&&m.querySelector('.modal-actions');
+    if(!acts||m.querySelector('.move-row'))return;const r=document.createElement('div');r.className='move-row';
+    r.innerHTML=`<button class="small" onclick="moveJoker(${i},-1)">◀ MOVE LEFT</button><button class="small" onclick="moveJoker(${i},1)">MOVE RIGHT ▶</button>`;
+    acts.parentNode.insertBefore(r,acts);};}
+  window.showJokerModal=addMove(window.showJokerModal);
+  window.showShopJokerManager=addMove(window.showShopJokerManager);
+  function guard(name,msg){const o=window[name];window[name]=function(){
+    if(!AppState.isScoring&&AppState.currentScreen==='PLAYER_DECISION'&&!AppState.selectedIndices.size&&name!=='x'){toast(msg);return;}
+    return o.apply(this,arguments);};}
+  guard('playHand','Tap 1–5 cards to play');guard('discardHand','Tap cards to discard first');
+  // no pinch / double-tap zoom
+  ['gesturestart','gesturechange'].forEach(e=>document.addEventListener(e,ev=>ev.preventDefault()));
+  // keep screen awake, resave when app is backgrounded
+  let wl;async function keep(){try{wl=await navigator.wakeLock?.request('screen');}catch(e){}}
+  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keep();else try{saveRun();}catch(e){}});
+  addEventListener('pagehide',()=>{try{saveRun();}catch(e){}});
+  addEventListener('touchstart',keep,{once:true});
+  // hint to install
+  try{if(navigator.standalone===false&&!localStorage.getItem('a2hs')){localStorage.setItem('a2hs','1');
+    setTimeout(()=>toast('Tip: Share → Add to Home Screen for full-screen play'),2500);}}catch(e){}
+})();
 </script>
 </body>
 </html>
