@@ -634,6 +634,43 @@ html{-webkit-text-size-adjust:100%}
  .joker-row{min-height:68px;padding:4px 6px}.joker-slot{height:60px;min-width:52px}.joker-slot .joker-icon{font-size:1.2rem}
  .consumable-slot{height:50px}.screen{gap:5px;padding:6px 10px}.hand-container{min-height:104px}
 }
+
+/* ===== look & feel pass ===== */
+.card.selected{box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(255,201,74,.75),0 6px 10px rgba(0,0,0,.4)}
+.card.swipe-pick{box-shadow:0 0 0 2px var(--blue),0 0 14px rgba(58,165,255,.8)}
+.consumable-slot span:last-child{font-size:.62rem!important;font-weight:800}
+.joker-slot .joker-name{font-size:.58rem}
+.boss-banner{font-size:.74rem;line-height:1.25}
+.top-bar span{font-size:.78rem;padding:5px 9px}
+.progress-bar{height:6px;border-radius:4px;background:rgba(0,0,0,.4);overflow:hidden;flex-shrink:0}
+.progress-bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--gold-dark),var(--gold-glow));transition:width .4s var(--lerp)}
+.deck-chip{display:flex;align-items:center;justify-content:center;padding:0 10px;border-radius:10px;background:rgba(0,0,0,.3);border:1.5px solid var(--panel-line);font-size:.68rem;font-weight:800;white-space:nowrap}
+.proj{font-family:var(--f-num);color:var(--cream)}
+.proj.win{color:#7dff9b;text-shadow:0 0 8px rgba(125,255,155,.5)}
+#hapt{position:fixed;left:-40px;top:0;width:1px;height:1px;opacity:.01;pointer-events:none}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+
+/* ===== card faces, sheets, tags ===== */
+.card{background:linear-gradient(160deg,#fffaf0,#f1e6c8);border-radius:7px;border-width:2px}
+.card .rank-suit{position:absolute;left:3px;top:2px;gap:0;align-items:center}
+.card .rank{font-size:.9rem;letter-spacing:-.5px;line-height:.95}
+.card .suit{font-size:.8rem;margin-top:0;line-height:1}
+.card::after{opacity:1;inset:auto;left:50%;top:56%;transform:translate(-50%,-50%);font-size:2.05rem;line-height:1}
+.card[data-suit="♥"]::after,.card[data-suit="♦"]::after{color:#c62b32}
+.card[data-suit="♠"]::after,.card[data-suit="♣"]::after{color:#1d1b18}
+.card[data-rank="A"]::after{font-size:2.7rem}
+.card[data-rank="J"],.card[data-rank="Q"],.card[data-rank="K"]{box-shadow:inset 0 0 0 3px #fbf2dc,inset 0 0 0 4.5px rgba(181,118,15,.75),0 2px 0 rgba(0,0,0,.3),0 5px 8px rgba(0,0,0,.35)}
+.card[data-rank="K"]::after{content:"♚"} .card[data-rank="Q"]::after{content:"♛"} .card[data-rank="J"]::after{content:"♞"}
+.card:not(.debuffed)[data-rank]::before{content:attr(data-rank);position:absolute;right:4px;bottom:2px;transform:rotate(180deg);font-family:var(--f-display);font-size:.72rem;line-height:1;opacity:.75;z-index:1}
+.card.selected{box-shadow:0 0 0 2px var(--gold),0 0 18px rgba(255,201,74,.75),0 6px 10px rgba(0,0,0,.4)!important}
+.sheet{position:absolute;left:0;right:0;bottom:0;z-index:350;background:linear-gradient(170deg,var(--panel-2),var(--panel));border-top:3px solid var(--gold);border-radius:20px 20px 0 0;padding:16px 18px calc(env(safe-area-inset-bottom,0px) + 18px);box-shadow:0 -10px 30px rgba(0,0,0,.55);animation:sheet-up .2s var(--lerp)}
+.sheet h3{font-family:var(--f-display);color:var(--gold);font-size:1.05rem;margin-bottom:8px}
+.sheet p{font-size:.85rem;line-height:1.45;margin:0 0 6px}.sheet small{opacity:.6;font-size:.68rem}
+@keyframes sheet-up{from{transform:translateY(100%)}to{transform:none}}
+.tag-desc{font-size:.68rem;text-align:center;opacity:.8;margin:4px 0 0;line-height:1.3}
+.tag-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:6px}
+.tag-pill{font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:9px;background:rgba(0,0,0,.35);border:1.5px solid var(--panel-line)}
+.undo-btn{min-height:40px}
 </style>
 </head>
 <body>
@@ -665,6 +702,7 @@ let _nextCardUID = 1;
 function nextCardUID() { return _nextCardUID++; }
 function resetCardUID() { _nextCardUID = 1; }
 let _nextJokerUID = 1;
+let _nextConsumableUID = 1; // was never declared: serializeRun() threw, so auto-save silently never worked
 function nextJokerUID() { return 'j' + (_nextJokerUID++); }
 function resetJokerUID() { _nextJokerUID = 1; }
 
@@ -964,6 +1002,7 @@ const StakeRegistry = [
   { id:'orange', name:'Orange Stake', icon:'🟠', desc:'Perishable Jokers' },
   { id:'gold', name:'Gold Stake', icon:'🟡', desc:'Rental Jokers' },
 ];
+const BOSS_MIN_ANTE={ox:6,serpent:5,plant:4,eye:3,tooth:3,house:2,wall:2,wheel:2,arm:2,fish:2,water:2,mouth:2,needle:2,flint:2,mark:2};
 const BlindRegistry = [
   { id:'hook', name:'The Hook', icon:'🪝', desc:'Discards 2 random cards after each hand' },
   { id:'ox', name:'The Ox', icon:'🐂', desc:'Playing most played hand sets money to $0' },
@@ -1086,7 +1125,7 @@ function getBaseHandsPerRound() {
 function getBaseDiscardsPerRound() {
   let discards = 3;
   if (AppState.deckId === 'red') discards += 1;
-  if (AppState.stakeId === 'blue') discards -= 1;
+  if (stk('blue')) discards -= 1;
   return discards;
 }
 
@@ -1096,7 +1135,8 @@ function getBaseDiscardsPerRound() {
 function calcHandSize() {
   let size = getBaseHandSize();
   if (AppState.vouchers.includes('paintbrush')) size += 1;
-  if (AppState.vouchers.includes('palette')) size += 2;
+  if (AppState.tagJuggle > 0) size += 3;
+  if (AppState.vouchers.includes('palette')) size += 1;
   getActiveJokers().forEach(({ def, instance }) => {
     if (def.effect === 'handSizeBonus') size += def.value;
     if (def.effect === 'stuntman') size += def.handSize;
@@ -1127,8 +1167,7 @@ function calcHandsPerRound() {
   let hands = getBaseHandsPerRound();
   if (AppState.vouchers.includes('grabber')) hands += 1;
   if (AppState.vouchers.includes('nachotong')) hands += 1;
-  if (AppState.vouchers.includes('hieroglyph')) hands += 1;
-  if (AppState.vouchers.includes('petroglyph')) hands += 2;
+  if (AppState.vouchers.includes('hieroglyph')) hands -= 1;
   return Math.max(1, hands);
 }
 function calcDiscardsPerRound() {
@@ -1136,6 +1175,8 @@ function calcDiscardsPerRound() {
   let discards = getBaseDiscardsPerRound();
   if (AppState.vouchers.includes('wasteful')) discards += 1;
   if (AppState.vouchers.includes('recycler')) discards += 1;
+  if (AppState.vouchers.includes('petroglyph')) discards -= 1;
+  if (AppState.tagDiscard) discards += 0;
   getActiveJokers().forEach(({def}) => {
     if (def.effect === 'discardBonus') discards += def.value;
     if (def.effect === 'merryAndy') discards += def.discards;
@@ -1376,7 +1417,6 @@ function emitCardEvents(card, ctx) {
     if (card.edition === 'poly') events.push({ type:'ed', text:'Poly ×1.5', chips:0, mult:0, multMult:1.5, money:0 });
   } else {
     if (card.enhancement === 'steel') events.push({ type:'enh', text:'Steel ×1.5', chips:0, mult:0, multMult:1.5, money:0 });
-    if (card.enhancement === 'gold' && !isPreview) events.push({ type:'enh', text:'Gold +$3', chips:0, mult:0, multMult:1, money:3 });
   }
 
   if (card.seal === 'gold' && !isHeld && !isPreview) {
@@ -1791,7 +1831,7 @@ const BossHandlers = {
     }
   },
   violetvessel: {
-    modifyTargetScore(target) { return target * 6; }
+    modifyTargetScore(target) { return target * 3; }
   },
 };
 
@@ -2112,18 +2152,14 @@ window.startRun = () => {
 };
 
 function getBlindTarget(blindIndex, ante) {
-  const base = [300, 450, 600][blindIndex] || 300;
-  let scale;
-  if (ante <= 8) scale = Math.pow(1.6, ante - 1);
-  else scale = Math.pow(1.6, 7) * Math.pow(2.4, ante - 8);
-  if (AppState.stakeId === 'green') scale *= 1.15;
-  if (AppState.stakeId === 'purple') scale *= 1.3;
-  let target = Math.floor(base * scale);
+  const T=stk('purple')?[300,1000,3200,9000,25000,60000,110000,200000]:stk('green')?[300,900,2600,8000,20000,36000,60000,100000]:[300,800,2000,5000,11000,20000,35000,50000];
+  let ab; if(ante<=8) ab=T[Math.max(1,ante)-1]; else {const c=ante-8,d=1+0.2*c; ab=Math.floor(T[7]*Math.pow(1.6+Math.pow(0.75*c,d),c));}
+  let target = Math.floor(ab*[1,1.5,2][blindIndex||0]);
   if (blindIndex === 2 && AppState.currentBoss) {
     const bh = BossHandlers[AppState.currentBoss.id];
     if (bh?.modifyTargetScore) target = bh.modifyTargetScore(target);
     if (AppState.currentBoss.id === 'wall') target *= 2;
-    if (AppState.currentBoss.id === 'violetvessel') target *= 6;
+    if (AppState.currentBoss.id === 'needle') target = Math.floor(target/2);
   }
   if (AppState.deckId === 'plasma') target *= 2;
   return target;
@@ -2132,7 +2168,7 @@ function getBlindTarget(blindIndex, ante) {
 function renderBlindSelect() {
   if (AppState.blindIndex === 2 && !AppState.currentBoss) {
     const isFinisher = AppState.ante % 8 === 0;
-    const pool = BlindRegistry.filter(b => isFinisher ? b.finisher : !b.finisher);
+    const pool = BlindRegistry.filter(b => isFinisher ? b.finisher : (!b.finisher && (BOSS_MIN_ANTE[b.id]||1) <= AppState.ante));
     AppState.currentBoss = randPick(pool);
   }
   const target = getBlindTarget(AppState.blindIndex, AppState.ante);
@@ -2524,13 +2560,13 @@ window.showJokerModal = (i) => {
   const def = JokerDefinitions[j.defId];
   const modal = document.createElement('div');
   modal.className = 'modal-overlay';
-  modal.innerHTML = `<div class="modal-box"><h3>${def.icon} ${def.name}</h3><p>${def.desc}</p><p style="font-size:0.8rem;opacity:0.7;">${def.rarity} · Sell: $${Math.floor(def.cost/2)}</p><div class="modal-actions"><button class="danger small" onclick="sellJoker(${i})">SELL</button><button class="small" onclick="this.closest('.modal-overlay').remove()">CLOSE</button></div></div>`;
+  modal.innerHTML = `<div class="modal-box"><h3>${def.icon} ${def.name}</h3><p>${def.desc}</p><p style="font-size:0.8rem;opacity:0.7;">${def.rarity} · Sell: $${(Math.floor(def.cost/2)+(j.state?.sellBonus||0))}</p><div class="modal-actions"><button class="danger small" onclick="sellJoker(${i})">SELL</button><button class="small" onclick="this.closest('.modal-overlay').remove()">CLOSE</button></div></div>`;
   document.getElementById('app').appendChild(modal);
 };
 window.sellJoker = (i) => {
   const j = AppState.jokers[i]; if (!j) return;
   const def = JokerDefinitions[j.defId];
-  AppState.money += Math.floor(def.cost/2);
+  AppState.money += (Math.floor(def.cost/2)+(j.state?.sellBonus||0));
   AppState.jokers.splice(i,1);
   document.querySelector('.modal-overlay')?.remove();
   shopBuySound();
@@ -2899,9 +2935,9 @@ function renderRoundOver() {
       if (j.rental) AppState.money = Math.max(-20, AppState.money - 3);
     });
   }
-  const base = AppState.blindIndex === 0 ? 3 : AppState.blindIndex === 1 ? 4 : 5;
+  const base = AppState.blindIndex === 0 ? (stk('red')?0:3) : AppState.blindIndex === 1 ? 4 : 5;
   const handsBonus = AppState.handsLeft;
-  const interest = AppState.noInterest ? 0 : Math.min(Math.floor(AppState.money/5), 5);
+  const interest = AppState.noInterest ? 0 : Math.max(0,Math.min(Math.floor(AppState.money/5), voucherActive('moneytree')?20:voucherActive('seedmoney')?10:5));
 
   let endMoney = 0;
   AppState.jokers.forEach(j => {
@@ -2921,7 +2957,6 @@ function renderRoundOver() {
   let goldMoney = 0;
   AppState.hand.forEach(c => {
     if (c.enhancement === 'gold') goldMoney += 3;
-    if (c.seal === 'gold') goldMoney += 3;
   });
   AppState.jokers.forEach(j => {
     const d=JokerDefinitions[j.defId];
@@ -3070,7 +3105,7 @@ window.buyItem = (i) => {
 window.sellJokerFromShop = (i) => {
   const j = AppState.jokers[i]; if (!j) return;
   const def = JokerDefinitions[j.defId];
-  AppState.money += Math.floor(def.cost/2);
+  AppState.money += (Math.floor(def.cost/2)+(j.state?.sellBonus||0));
   AppState.jokers.splice(i,1);
   if (AppState.verdantLeafActive) {
     AppState.verdantLeafActive = false;
@@ -3149,7 +3184,7 @@ function applyConsumable(def, targets) {
     case 'doubleMoney': AppState.money = Math.min(AppState.money*2, 20); showModal('🔮', `Money → $${AppState.money}!`); return;
     case 'moneyFromJokers': {
       let total = 0;
-      AppState.jokers.forEach(j => { const d = JokerDefinitions[j.defId]; if (d) total += Math.floor(d.cost/2); });
+      AppState.jokers.forEach(j => { const d = JokerDefinitions[j.defId]; if (d) total += Math.floor(d.cost/2)+(j.state?.sellBonus||0); });
       total = Math.min(total, 50);
       AppState.money += total;
       showModal('🔮', `+$${total}!`); return;
@@ -3379,7 +3414,7 @@ function saveRun(){if(AppState.currentScreen==='BOOT'||AppState.isScoring)return
 function clearRunSave(){try{localStorage.removeItem(RUN_SAVE_KEY);}catch(e){}}
 function hasSavedRun(){try{return !!localStorage.getItem(RUN_SAVE_KEY);}catch(e){return false;}}
 function loadSavedRun(){try{const raw=localStorage.getItem(RUN_SAVE_KEY);if(!raw)return false;const x=JSON.parse(raw);if(x.version!==2)return false;_rngState=x.rng;_nextCardUID=x.counters.c;_nextJokerUID=x.counters.j;_nextConsumableUID=x.counters.co;const st=x.state;Object.keys(st).forEach(k=>{if(!['selectedIndices','disabledJokers','facedownJokers','currentBoss'].includes(k))AppState[k]=st[k];});AppState.selectedIndices=new Set(st.selectedIndices||[]);AppState.disabledJokers=new Set(st.disabledJokers||[]);AppState.facedownJokers=new Set(st.facedownJokers||[]);AppState.currentBoss=st.currentBoss?BlindRegistry.find(b=>b.id===st.currentBoss):null;return true;}catch(e){clearRunSave();return false;}}
-function decorateShopJoker(j){const out=createJokerInstance(j.id);if(AppState.stakeId==='black'&&rng()<0.3)out.eternal=true;if(AppState.stakeId==='orange'&&rng()<0.3){out.perishable=true;out.perishableRounds=5;}if(AppState.stakeId==='gold'&&rng()<0.3){out.rental=true;}return out;}
+function decorateShopJoker(j){const out=createJokerInstance(j.id);if(stk('black')&&rng()<0.3)out.eternal=true;if(stk('orange')&&rng()<0.3){out.perishable=true;out.perishableRounds=5;}if(stk('gold')&&rng()<0.3){out.rental=true;}return out;}
 
 // Override run setup with persistent unlocks and a deterministic seedable run.
 const _startRunOriginal=startRun;
@@ -3403,7 +3438,7 @@ window.generateShopItems=function(){let items=_generateShopOriginal();const mult
 
 // Buy wrapper applies editions, seals and stake stickers without allowing overspending.
 const _buyItemOriginal=buyItem;
-window.buyItem=function(i){const item=AppState.shopItems[i];if(!item)return;const before=AppState.jokers.length;_buyItemOriginal(i);if(item.kind==='joker'&&AppState.jokers.length>before){const j=AppState.jokers[AppState.jokers.length-1];if(AppState.stakeId==='black'&&rng()<0.3)j.eternal=true;if(AppState.stakeId==='orange'&&rng()<0.3){j.perishable=true;j.perishableRounds=5;}if(AppState.stakeId==='gold'&&rng()<0.3)j.rental=true;discover('jokers',j.defId);}};
+window.buyItem=function(i){const item=AppState.shopItems[i];if(!item)return;const before=AppState.jokers.length;_buyItemOriginal(i);if(item.kind==='joker'&&AppState.jokers.length>before){const j=AppState.jokers[AppState.jokers.length-1];if(stk('black')&&rng()<0.3)j.eternal=true;if(stk('orange')&&rng()<0.3){j.perishable=true;j.perishableRounds=5;}if(stk('gold')&&rng()<0.3)j.rental=true;discover('jokers',j.defId);}};
 const _sellOriginal=sellJokerFromShop;
 window.sellJokerFromShop=function(i){const j=AppState.jokers[i];if(j?.eternal){showModal('♾️','Eternal Jokers cannot be sold.');return;}if(j?.defId==='luchador'&&AppState.blindIndex===2){AppState.currentBoss=null;AppState.verdantLeafActive=false;}const before=AppState.jokers.length;_sellOriginal(i);if(AppState.jokers.length<before){const camp=AppState.jokers.find(x=>x.defId==='campfire');if(camp)camp.state.value=(camp.state.value||1)+0.25;}};
 
@@ -3459,7 +3494,7 @@ const __createGoldSealCard = () => {
 };
 const __sellValue = j => {
   const d = JokerDefinitions[j.defId];
-  return Math.floor((d?.cost || 0)/2) + (AppState.jokers.some(x => JokerDefinitions[x.defId]?.effect === 'giftCard') ? 1 : 0);
+  return Math.floor((d?.cost || 0)/2) + (j.state?.sellBonus||0) + (AppState.jokers.some(x => JokerDefinitions[x.defId]?.effect === 'giftCard') ? 1 : 0);
 };
 
 // Direct scoring handlers that were missing or incorrect.
@@ -3901,9 +3936,7 @@ window.__balatro = {
 AppState.voucherExpirations = AppState.voucherExpirations || {};
 
 function voucherActive(id) {
-  return AppState.vouchers.includes(id) &&
-    (!AppState.voucherExpirations || AppState.voucherExpirations[id] === undefined ||
-     AppState.voucherExpirations[id] >= AppState.ante);
+  return AppState.vouchers.includes(id);
 }
 
 function shopDiscount() {
@@ -3913,7 +3946,7 @@ function shopDiscount() {
 }
 
 function shopPrice(baseCost) {
-  const raw = Math.max(1, Math.floor(baseCost * (1 - shopDiscount())));
+  const raw = baseCost <= 0 ? 0 : Math.max(1, Math.floor(baseCost * (1 - shopDiscount())));
   return raw;
 }
 
@@ -4260,7 +4293,7 @@ window.renderShop = function() {
     `<div style="text-align:center;opacity:.5;padding:15px;font-size:.65rem">No booster packs.</div>`;
 
   const voucherBody = vouchers.length ? `<div class="shop-grid">${vouchers.map(cardFor).join('')}</div>
-    <div class="shop-voucher-note">Purchased vouchers stay active through Ante ${AppState.ante}.</div>` :
+    <div class="shop-voucher-note">Vouchers last for the rest of the run.</div>` :
     `<div style="text-align:center;opacity:.5;padding:12px;font-size:.6rem">All available vouchers have been purchased.</div>`;
 
   const jokerManage = AppState.jokers.length
@@ -4280,7 +4313,7 @@ window.renderShop = function() {
       <div style="text-align:right;font-size:.52rem;opacity:.65">3 SECTIONS<br>JOKERS · BOOSTERS · VOUCHERS</div></div>
     ${section('JOKERS','BUILD YOUR ENGINE',jokerBody)}
     ${section('BOOSTER PACKS','PLAYING CARDS & JOKERS',packBody)}
-    ${section('VOUCHERS','ACTIVE THIS ANTE',voucherBody)}
+    ${section('VOUCHERS','PERMANENT UPGRADES',voucherBody)}
     <section class="shop-section"><div class="shop-section-head"><span class="shop-section-title">YOUR JOKERS</span><span class="shop-section-sub">TAP A JOKER TO INSPECT · MOVE · SELL</span></div>${jokerManage}</section>
     <div class="shop-footer-actions">
       <button onclick="viewDeck()">🃏 DECK</button>
@@ -4309,7 +4342,7 @@ window.expireAnteVouchers = function() {
   const oldAnte = AppState.ante;
   const expired = [];
   Object.keys(AppState.voucherExpirations||{}).forEach(id => {
-    if (AppState.voucherExpirations[id] < oldAnte) {
+    if (false) {
       expired.push(id);
       delete AppState.voucherExpirations[id];
     }
@@ -4646,428 +4679,351 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
   window.multExplosionSound = function(){ SFX.multPop(); };
   window.shopBuySound = function(){ SFX.buy(); };
 
-  // ---------- reactive, layered, always-on background music ----------
-  // Two chord palettes ("scenes") — moody for the table, brighter for the shop —
-  // blended by a slowly-drifting mix value so switching screens never cuts audio,
-  // it just gradually leans the loop toward the other palette over several bars.
-  // ---------- multi-track procedural soundtrack ----------
-  // Each track has its own chord language, rhythm, instrument palette and tempo.
-  // Tracks are selected automatically and crossfaded at bar boundaries, so the
-  // game gets real musical variety without loading any external audio files.
+  // ---------- adaptive, layered background music ----------
+  // This soundtrack is intentionally procedural so the single-file build stays
+  // self-contained. Music is divided into small tracks and independently mixed
+  // layers. Screen changes are quantized to bar boundaries, while the current
+  // track is allowed to finish its release before the next one fades in.
   const MUSIC_TRACKS = [
     {
-      name:'Velvet Room',
-      bpm:96,
-      chords:[
-        [220.00,261.63,329.63,392.00],
-        [174.61,220.00,261.63,349.23],
-        [130.81,164.81,196.00,246.94],
-        [196.00,246.94,293.66,392.00],
-        [164.81,207.65,246.94,329.63],
-        [196.00,233.08,293.66,369.99]
-      ],
-      pad:['sine','triangle'], bass:'sine', pluck:'triangle',
-      style:'warm', density:.42
+      name:'Velvet Room', bpm:92, moods:['game','blind'],
+      chords:[[220,261.63,329.63,392],[196,246.94,293.66,369.99],[174.61,220,261.63,349.23],[196,233.08,293.66,392],[164.81,207.65,246.94,329.63],[185,220,277.18,369.99]],
+      pad:['sine','triangle'], bass:'sine', pluck:'triangle', density:.34, warmth:1
     },
     {
-      name:'Paper Moon',
-      bpm:88,
-      chords:[
-        [196.00,246.94,293.66,369.99],
-        [220.00,277.18,329.63,415.30],
-        [164.81,207.65,246.94,311.13],
-        [146.83,184.99,220.00,293.66],
-        [174.61,233.08,277.18,349.23],
-        [196.00,261.63,311.13,392.00]
-      ],
-      pad:['triangle','sine'], bass:'triangle', pluck:'sine',
-      style:'dreamy', density:.34
+      name:'Paper Moon', bpm:86, moods:['menu','game'],
+      chords:[[196,246.94,293.66,369.99],[220,277.18,329.63,415.3],[174.61,220,261.63,349.23],[146.83,184.99,220,293.66],[164.81,207.65,246.94,311.13],[196,246.94,311.13,392]],
+      pad:['triangle','sine'], bass:'triangle', pluck:'sine', density:.25, warmth:1
     },
     {
-      name:'Midnight Arcade',
-      bpm:108,
-      chords:[
-        [110.00,164.81,220.00,261.63],
-        [130.81,196.00,246.94,329.63],
-        [146.83,220.00,293.66,349.23],
-        [123.47,185.00,246.94,311.13],
-        [110.00,146.83,220.00,293.66],
-        [130.81,174.61,261.63,329.63]
-      ],
-      pad:['sawtooth','triangle'], bass:'square', pluck:'square',
-      style:'neon', density:.68
+      name:'Velvet Arcade', bpm:104, moods:['game','shop'],
+      chords:[[110,164.81,220,261.63],[130.81,196,246.94,329.63],[146.83,220,293.66,349.23],[123.47,185,246.94,311.13],[110,146.83,220,293.66],[130.81,174.61,261.63,329.63]],
+      pad:['sawtooth','triangle'], bass:'square', pluck:'square', density:.52, warmth:.8
     },
     {
-      name:'Dust & Neon',
-      bpm:101,
-      chords:[
-        [185.00,220.00,277.18,329.63],
-        [155.56,196.00,246.94,293.66],
-        [174.61,220.00,261.63,349.23],
-        [138.59,174.61,233.08,293.66],
-        [164.81,207.65,246.94,369.99],
-        [146.83,196.00,246.94,329.63]
-      ],
-      pad:['triangle','sawtooth'], bass:'sine', pluck:'sawtooth',
-      style:'dusty', density:.55
+      name:'Dust & Neon', bpm:98, moods:['game','boss'],
+      chords:[[185,220,277.18,329.63],[155.56,196,246.94,293.66],[174.61,220,261.63,349.23],[138.59,174.61,233.08,293.66],[164.81,207.65,246.94,369.99],[146.83,196,246.94,329.63]],
+      pad:['triangle','sawtooth'], bass:'sine', pluck:'sawtooth', density:.58, warmth:.7
     },
     {
-      name:'Glass Elevator',
-      bpm:114,
-      chords:[
-        [261.63,329.63,392.00,493.88],
-        [233.08,293.66,349.23,440.00],
-        [196.00,246.94,329.63,392.00],
-        [220.00,277.18,369.99,440.00],
-        [246.94,311.13,392.00,466.16],
-        [220.00,293.66,349.23,523.25]
-      ],
-      pad:['sine','triangle'], bass:'sine', pluck:'triangle',
-      style:'glass', density:.74
+      name:'Glass Elevator', bpm:112, moods:['shop','game'],
+      chords:[[261.63,329.63,392,493.88],[233.08,293.66,349.23,440],[196,246.94,329.63,392],[220,277.18,369.99,440],[246.94,311.13,392,466.16],[220,293.66,349.23,523.25]],
+      pad:['sine','triangle'], bass:'sine', pluck:'triangle', density:.55, warmth:.9
     },
     {
-      name:'Slow Orbit',
-      bpm:82,
-      chords:[
-        [146.83,220.00,261.63,329.63],
-        [130.81,196.00,246.94,293.66],
-        [164.81,207.65,246.94,311.13],
-        [123.47,185.00,220.00,277.18],
-        [146.83,196.00,233.08,293.66],
-        [130.81,174.61,233.08,277.18]
-      ],
-      pad:['sine','sine'], bass:'sine', pluck:'sine',
-      style:'space', density:.25
+      name:'Slow Orbit', bpm:80, moods:['menu','game'],
+      chords:[[146.83,220,261.63,329.63],[130.81,196,246.94,293.66],[164.81,207.65,246.94,311.13],[123.47,185,220,277.18],[146.83,196,233.08,293.66],[130.81,174.61,233.08,277.18]],
+      pad:['sine','sine'], bass:'sine', pluck:'sine', density:.16, warmth:1.1
+    },
+    {
+      name:'Lucky Lanterns', bpm:100, moods:['shop','menu'],
+      chords:[[220,277.18,329.63,440],[196,246.94,293.66,392],[174.61,233.08,293.66,349.23],[220,261.63,329.63,415.3],[185,246.94,293.66,369.99],[196,261.63,311.13,392]],
+      pad:['triangle','sine'], bass:'triangle', pluck:'triangle', density:.43, warmth:1.15
+    },
+    {
+      name:'Blindside', bpm:90, moods:['blind','boss'],
+      chords:[[146.83,220,277.18,349.23],[155.56,207.65,261.63,329.63],[130.81,196,246.94,311.13],[146.83,185,233.08,293.66],[164.81,207.65,246.94,329.63],[138.59,174.61,233.08,293.66]],
+      pad:['sine','sawtooth'], bass:'triangle', pluck:'sine', density:.32, warmth:.55
+    },
+    {
+      name:'After Hours', bpm:84, moods:['round','game','menu'],
+      chords:[[174.61,220,261.63,329.63],[196,246.94,293.66,392],[164.81,207.65,246.94,311.13],[146.83,220,277.18,349.23],[185,233.08,293.66,369.99],[164.81,196,246.94,329.63]],
+      pad:['sine','triangle'], bass:'sine', pluck:'triangle', density:.22, warmth:1.05
+    },
+    {
+      name:'Golden Run', bpm:106, moods:['victory','round'],
+      chords:[[261.63,329.63,392,523.25],[293.66,369.99,440,587.33],[220,277.18,329.63,440],[246.94,311.13,392,493.88],[261.63,329.63,415.3,523.25],[233.08,293.66,369.99,466.16]],
+      pad:['triangle','sine'], bass:'sine', pluck:'triangle', density:.48, warmth:1.2
+    },
+    {
+      name:'Last Hand', bpm:76, moods:['game','boss','gameover'],
+      chords:[[110,164.81,207.65,261.63],[123.47,185,233.08,293.66],[98,146.83,196,246.94],[110,164.81,220,277.18],[92.5,138.59,185,233.08],[123.47,164.81,207.65,246.94]],
+      pad:['sine','sawtooth'], bass:'sine', pluck:'sine', density:.18, warmth:.45
+    },
+    {
+      name:'Neon Luck', bpm:118, moods:['shop','game'],
+      chords:[[196,246.94,329.63,392],[220,277.18,369.99,440],[174.61,220,293.66,349.23],[196,261.63,329.63,415.3],[220,293.66,349.23,440],[185,233.08,293.66,369.99]],
+      pad:['square','triangle'], bass:'square', pluck:'square', density:.62, warmth:.72
     }
   ];
 
-  // The shop has a related harmonic palette for every track rather than one
-  // universal "shop song". That keeps the identity of the current track intact.
-  const SHOP_OFFSETS = [1.0, 1.12246, 1.0, 1.18921, 1.05946, 1.0];
-
-  const BEATS_PER_BAR = 4;
+  const SCREEN_MOODS = {
+    BOOT:'menu', RUN_INIT:'menu',
+    BLIND_SELECT:'blind', ROUND_INIT:'blind',
+    PLAYER_DECISION:'game', SCORING:'game',
+    SHOP:'shop', ROUND_OVER:'round',
+    VICTORY:'victory', GAME_OVER:'gameover',
+    DECK_VIEW:'menu', HAND_LEVELS_VIEW:'menu'
+  };
+  const BEATS_PER_BAR=4;
   let beatCount=0, musicRunning=false, musicTimer=null;
-  let gameChordIdx=0, currentBarChord=null, currentBarBright=false;
-  let sceneMix=0, sceneTarget=0;
-  let intensity=0, intensityTarget=0;
-  let droneLayers=[];
-  let currentTrackIndex=0;
-  let currentTrack=null;
-  let trackGain=null;
-  let trackChanging=false;
-  let trackBars=0;
-  let nextTrackIndex=-1;
-  let lastTrackIndex=-1;
+  let currentTrackIndex=-1, currentTrack=null, trackGain=null;
+  let pendingTrackIndex=-1, transitionQueued=false, trackBars=0;
+  let currentChord=null, chordIndex=0;
+  let intensity=0, intensityTarget=0, sceneMix=0, sceneTarget=0;
+  let variation=0, lastMood='menu', lastScreen='';
 
-  function trackBeatMs(track){
-    return 60000 / track.bpm;
+  function trackBeatMs(t){ return 60000/t.bpm; }
+
+  function getMusicMood(){
+    const scr=(typeof AppState!=='undefined'&&AppState.currentScreen)||'BOOT';
+    return SCREEN_MOODS[scr]||'game';
   }
 
-  function createTrackBus(){
-    const c=ac();
-    trackGain=c.createGain();
-    trackGain.gain.value=1;
-    trackGain.connect(musicBus);
-    return trackGain;
-  }
-
-  function chooseTrack(forceDifferent=true){
-    let idx=Math.floor(Math.random()*MUSIC_TRACKS.length);
-    if(forceDifferent && MUSIC_TRACKS.length>1){
-      while(idx===currentTrackIndex) idx=Math.floor(Math.random()*MUSIC_TRACKS.length);
-    }
-    return idx;
-  }
-
-  function setTrackGain(gain, target, seconds){
-    if(!gain || !ctx) return;
-    const now=ctx.currentTime;
-    gain.gain.cancelScheduledValues(now);
-    gain.gain.setValueAtTime(Math.max(.0001,gain.gain.value),now);
-    gain.gain.linearRampToValueAtTime(Math.max(.0001,target),now+seconds);
-  }
-
-  function startDrone(){
-    if(droneLayers.length) return;
-    const c=ac();
-    [55,110.75].forEach((f,i)=>{
-      const osc=c.createOscillator(); osc.type='sine'; osc.frequency.value=f; osc.detune.value=i===1?7:-5;
-      const filt=c.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=380;
-      const g=c.createGain(); g.gain.value=.0001;
-      osc.connect(filt); filt.connect(g); g.connect(musicBus);
-      osc.start();
-      droneLayers.push({osc,gain:g,filt});
-    });
-    const lfo=c.createOscillator(); lfo.type='sine'; lfo.frequency.value=.045;
-    const lfoGain=c.createGain(); lfoGain.gain.value=55;
-    lfo.connect(lfoGain);
-    droneLayers.forEach(d=>lfoGain.connect(d.filt.frequency));
-    lfo.start();
-  }
-
-  function updateDroneLevel(){
-    if(!droneLayers.length) return;
-    const c=ac();
-    const target=musicRunning ? (.020+intensity*.022) : .0001;
-    droneLayers.forEach(d=>{
-      d.gain.gain.setTargetAtTime(target,c.currentTime,musicRunning?2.2:1.4);
-    });
-  }
-
-  function makeTrackChord(track,index,bright){
-    const base=track.chords[index % track.chords.length];
-    if(!bright) return base;
-    const off=SHOP_OFFSETS[index % SHOP_OFFSETS.length];
-    return base.map((f,i)=>f*off*(i===0?.5:1));
-  }
-
-  function playTrackPad(freqs, dur, peak, cutoff, track){
-    const c=ac(), t0=c.currentTime, bus=trackGain||musicBus;
-    freqs.forEach((f,i)=>{
-      const osc=c.createOscillator();
-      osc.type=track.pad[i%track.pad.length];
-      osc.frequency.value=f;
-      osc.detune.value=(i-1.5)*2.5;
-      const filt=c.createBiquadFilter();
-      filt.type='lowpass';
-      filt.frequency.value=cutoff;
-      const g=c.createGain();
-      osc.connect(filt); filt.connect(g); g.connect(bus);
-      const pk=peak*(i===0?1:.72);
-      g.gain.setValueAtTime(.0001,t0);
-      g.gain.linearRampToValueAtTime(pk,t0+.14);
-      g.gain.setValueAtTime(pk,t0+dur*.62);
-      g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
-      osc.start(t0);
-      osc.stop(t0+dur+.05);
-    });
-  }
-
-  function playTrackBass(freq,delay,gain,track,beatMs){
-    const c=ac(), t0=c.currentTime+delay, bus=trackGain||musicBus;
-    const osc=c.createOscillator(); osc.type=track.bass; osc.frequency.value=freq;
-    const filt=c.createBiquadFilter(); filt.type='lowpass'; filt.frequency.value=track.style==='neon'?520:300;
-    const g=c.createGain();
-    osc.connect(filt); filt.connect(g); g.connect(bus);
-    g.gain.setValueAtTime(.0001,t0);
-    g.gain.exponentialRampToValueAtTime(gain,t0+.012);
-    g.gain.exponentialRampToValueAtTime(.0001,t0+(beatMs/1000)*1.55);
-    osc.start(t0); osc.stop(t0+(beatMs/1000)*1.7);
-  }
-
-  function playTrackPluck(freq,delay,gain,track){
-    const c=ac(), t0=c.currentTime+delay, bus=trackGain||musicBus;
-    const osc=c.createOscillator(); osc.type=track.pluck; osc.frequency.value=freq;
-    const filt=c.createBiquadFilter();
-    filt.type='lowpass';
-    filt.frequency.value=track.style==='glass'?3400:track.style==='neon'?2300:1800;
-    const g=c.createGain();
-    osc.connect(filt); filt.connect(g); g.connect(bus);
-    g.gain.setValueAtTime(.0001,t0);
-    g.gain.exponentialRampToValueAtTime(gain,t0+.012);
-    g.gain.exponentialRampToValueAtTime(.0001,t0+(track.style==='space'?1.35:.82));
-    osc.start(t0);
-    osc.stop(t0+(track.style==='space'?1.4:.88));
-  }
-
-  function playTrackPerc(track,barPos){
-    const c=ac(), bus=trackGain||musicBus;
-    const t0=c.currentTime;
-    const dur=track.style==='neon'?.035:.045;
-    const buf=c.createBuffer(1,Math.max(1,Math.floor(c.sampleRate*dur)),c.sampleRate);
-    const d=buf.getChannelData(0);
-    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,track.style==='space'?3.5:2.2);
-    const src=c.createBufferSource(); src.buffer=buf;
-    const f=c.createBiquadFilter();
-    f.type=track.style==='dusty'?'bandpass':'highpass';
-    f.frequency.value=track.style==='glass'?7200:track.style==='space'?4200:track.style==='dusty'?2800:6000;
-    const g=c.createGain();
-    g.gain.value=(.007+track.density*.012)*(barPos===0?1.15:1);
-    src.connect(f); f.connect(g); g.connect(bus); src.start(t0);
-  }
-
-  function computeIntensityTarget(){
-    if(typeof AppState==='undefined') return 0;
+  function targetIntensity(){
+    if(typeof AppState==='undefined') return .05;
     const scr=AppState.currentScreen;
-    if(scr==='BOOT'||scr==='RUN_INIT') return 0;
-    let v=0;
-    v+=Math.min(1,((AppState.ante||1)-1)/7)*.26;
-    if(AppState.currentBoss&&AppState.blindIndex===2) v+=.22;
-    try{
-      const maxHands=calcHandsPerRound();
-      if(maxHands>0&&typeof AppState.handsLeft==='number') v+=(1-Math.max(0,AppState.handsLeft)/maxHands)*.2;
-    }catch(e){}
-    if(AppState.targetScore>0) v+=Math.min(1,(AppState.score||0)/AppState.targetScore)*.32;
-    return Math.max(0,Math.min(1,v));
+    let v=0.04;
+    if(scr==='PLAYER_DECISION'||scr==='SCORING'){
+      v += Math.min(.24,Math.max(0,((AppState.ante||1)-1)/7)*.24);
+      if(AppState.currentBoss && AppState.blindIndex===2) v+=.22;
+      if(typeof AppState.handsLeft==='number'){
+        try{
+          const h=Math.max(1,calcHandsPerRound());
+          v+=(1-Math.max(0,AppState.handsLeft/h))*.20;
+        }catch(e){}
+      }
+      if(AppState.targetScore>0) v+=Math.min(.30,(AppState.score||0)/AppState.targetScore*.30);
+    }else if(scr==='BLIND_SELECT'||scr==='ROUND_INIT') v=.12+Math.min(.18,((AppState.ante||1)-1)*.025);
+    else if(scr==='SHOP') v=.08;
+    else if(scr==='ROUND_OVER') v=.16;
+    else if(scr==='VICTORY') v=.22;
+    else if(scr==='GAME_OVER') v=.10;
+    return Math.max(0,Math.min(.72,v));
   }
 
-  function beginTrackTransition(){
-    if(!musicRunning||trackChanging) return;
-    trackChanging=true;
-    nextTrackIndex=chooseTrack(true);
-    const c=ac();
-    const oldBus=trackGain;
-    const newBus=c.createGain();
-    newBus.gain.value=.0001;
-    newBus.connect(musicBus);
-    const oldIndex=currentTrackIndex;
-    currentTrackIndex=nextTrackIndex;
-    currentTrack=MUSIC_TRACKS[currentTrackIndex];
-    trackGain=newBus;
-    trackChanging=false;
+  function chooseTrackForMood(mood,exclude){
+    const pool=MUSIC_TRACKS.map((t,i)=>({t,i}))
+      .filter(x=>x.t.moods.includes(mood)&&x.i!==exclude);
+    const fallback=MUSIC_TRACKS.map((t,i)=>({t,i})).filter(x=>x.i!==exclude);
+    const list=pool.length?pool:fallback;
+    // Favor tracks that haven't just played, but keep a little randomness.
+    return list[Math.floor(Math.random()*list.length)].i;
+  }
 
-    // Crossfade over roughly two bars. The old layer is allowed to finish its
-    // release while the new composition enters underneath it.
-    const fadeSeconds=Math.max(2.2,(trackBeatMs(currentTrack)*BEATS_PER_BAR*2)/1000);
+  function ensureAudioBus(){
+    const c=ac();
+    if(!trackGain){
+      trackGain=c.createGain();
+      trackGain.gain.value=.0001;
+      trackGain.connect(musicBus);
+    }
+    return c;
+  }
+
+  function setTrackBus(g,target,seconds){
+    if(!g||!ctx)return;
+    const now=ctx.currentTime;
+    g.gain.cancelScheduledValues(now);
+    g.gain.setValueAtTime(Math.max(.0001,g.gain.value),now);
+    g.gain.exponentialRampToValueAtTime(Math.max(.0001,target),now+seconds);
+  }
+
+  function playPad(freqs,dur,peak,cutoff,track,bus){
+    const c=ac(),t0=c.currentTime;
+    freqs.forEach((f,i)=>{
+      const o=c.createOscillator(),filt=c.createBiquadFilter(),g=c.createGain();
+      o.type=track.pad[i%track.pad.length];o.frequency.value=f;o.detune.value=(i-1.5)*2.2;
+      filt.type='lowpass';filt.frequency.value=cutoff;
+      o.connect(filt);filt.connect(g);g.connect(bus);
+      const pk=peak*(i===0?1:.66);
+      g.gain.setValueAtTime(.0001,t0);
+      g.gain.linearRampToValueAtTime(pk,t0+.16);
+      g.gain.setValueAtTime(pk,t0+dur*.55);
+      g.gain.exponentialRampToValueAtTime(.0001,t0+dur);
+      o.start(t0);o.stop(t0+dur+.05);
+    });
+  }
+
+  function playBass(freq,delay,gain,track,beatMs,bus){
+    const c=ac(),t0=c.currentTime+delay,o=c.createOscillator(),f=c.createBiquadFilter(),g=c.createGain();
+    o.type=track.bass;o.frequency.value=freq;f.type='lowpass';f.frequency.value=track.warmth>1?340:300;
+    o.connect(f);f.connect(g);g.connect(bus);
+    g.gain.setValueAtTime(.0001,t0);
+    g.gain.exponentialRampToValueAtTime(gain,t0+.018);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+(beatMs/1000)*1.45);
+    o.start(t0);o.stop(t0+(beatMs/1000)*1.65);
+  }
+
+  function playPluck(freq,delay,gain,track,bus){
+    const c=ac(),t0=c.currentTime+delay,o=c.createOscillator(),f=c.createBiquadFilter(),g=c.createGain();
+    o.type=track.pluck;o.frequency.value=freq;
+    f.type='lowpass';f.frequency.value=track.pluck==='square'?2400:track.warmth>1?3600:2000;
+    o.connect(f);f.connect(g);g.connect(bus);
+    g.gain.setValueAtTime(.0001,t0);
+    g.gain.exponentialRampToValueAtTime(gain,t0+.012);
+    g.gain.exponentialRampToValueAtTime(.0001,t0+.62);
+    o.start(t0);o.stop(t0+.68);
+  }
+
+  function playSoftPerc(track,pos,bus){
+    // Extremely quiet noise ticks. Percussion is deliberately kept below the
+    // harmonic bed so the game still feels like a game, not a music player.
+    const c=ac(),dur=pos===0?.055:.035;
+    const b=c.createBuffer(1,Math.floor(c.sampleRate*dur),c.sampleRate),d=b.getChannelData(0);
+    for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,2.4);
+    const s=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+    s.buffer=b;f.type='highpass';f.frequency.value=track.warmth>1?4200:5200;
+    g.gain.value=.0045+track.density*.0045;
+    s.connect(f);f.connect(g);g.connect(bus);s.start();
+  }
+
+  function layerForIntensity(){
+    // 0 = pad/bass only, 1 = full but still background.
+    return Math.max(0,Math.min(1,intensity));
+  }
+
+  function beginTrackTransition(mood){
+    if(!musicRunning||transitionQueued)return;
+    transitionQueued=true;
+    pendingTrackIndex=chooseTrackForMood(mood,currentTrackIndex);
+  }
+
+  function applyPendingTrack(){
+    if(!transitionQueued||pendingTrackIndex<0)return;
+    const c=ac(),oldBus=trackGain,oldIndex=currentTrackIndex;
+    currentTrackIndex=pendingTrackIndex;
+    currentTrack=MUSIC_TRACKS[currentTrackIndex];
+    pendingTrackIndex=-1;transitionQueued=false;trackBars=0;
+    const nextBus=c.createGain();nextBus.gain.value=.0001;nextBus.connect(musicBus);
+    trackGain=nextBus;
     const now=c.currentTime;
-    newBus.gain.setValueAtTime(.0001,now);
-    newBus.gain.exponentialRampToValueAtTime(.85,now+fadeSeconds);
+    const fadeBars=2;
+    const fadeSec=Math.max(2.0,trackBeatMs(currentTrack)*BEATS_PER_BAR*fadeBars/1000);
+    nextBus.gain.setValueAtTime(.0001,now);
+    nextBus.gain.exponentialRampToValueAtTime(.72,now+fadeSec);
     if(oldBus){
       oldBus.gain.cancelScheduledValues(now);
       oldBus.gain.setValueAtTime(Math.max(.0001,oldBus.gain.value),now);
-      oldBus.gain.exponentialRampToValueAtTime(.0001,now+fadeSeconds);
-      setTimeout(()=>{try{oldBus.disconnect();}catch(e){}},Math.ceil(fadeSeconds*1000)+300);
+      oldBus.gain.exponentialRampToValueAtTime(.0001,now+fadeSec);
+      setTimeout(()=>{try{oldBus.disconnect();}catch(e){}},fadeSec*1000+400);
     }
-    trackBars=0;
-    beatCount=0;
+    // Start the new track on the same bar boundary. The new timer's first beat
+    // is deliberately immediate, while the old layer is still fading underneath.
+    beatCount=0;chordIndex=Math.floor(Math.random()*currentTrack.chords.length);
+    lastScreen=(typeof AppState!=='undefined'?AppState.currentScreen:'');
   }
 
-  function pickBarChord(){
-    const useShop=sceneTarget>.5||sceneMix>.72;
-    currentBarBright=useShop;
-    currentBarChord=makeTrackChord(currentTrack,gameChordIdx,useShop);
-    gameChordIdx++;
+  function pickChord(mood){
+    const base=currentTrack.chords[chordIndex%currentTrack.chords.length].slice();
+    chordIndex++;
+    // Shop/menu get a gentle lift without changing the identity of the track.
+    if(mood==='shop'||mood==='menu'||mood==='victory'){
+      const lift=variation%3===1?1.0:variation%3===2?1.05946:1.0;
+      return base.map((f,i)=>f*(i===0?.5:1)*lift);
+    }
+    return base;
   }
 
   function musicStep(){
-    if(!musicRunning) return;
-    const barPos=beatCount%BEATS_PER_BAR;
-    sceneTarget=(typeof AppState!=='undefined'&&AppState.currentScreen==='SHOP')?1:0;
+    if(!musicRunning)return;
+    const mood=getMusicMood();
+    const pos=beatCount%BEATS_PER_BAR;
 
-    if(barPos===0){
-      intensityTarget=computeIntensityTarget();
-      sceneMix+=(sceneTarget-sceneMix)*.5;
+    if(mood!==lastMood){
+      lastMood=mood;
+      // A screen change requests a compatible track, but never interrupts the
+      // current bar. The request is consumed at the next bar boundary.
+      beginTrackTransition(mood);
+      sceneTarget=mood==='shop'||mood==='menu'||mood==='victory'?1:0;
+    }
+
+    if(pos===0){
+      intensityTarget=targetIntensity();
       trackBars++;
+      variation=(variation+1)%6;
 
-      // Let a track establish itself for a while, then move to a different one.
-      // The transition starts on a musical boundary rather than mid-note.
-      if(trackBars>=8 && Math.random()<.42){
-        beginTrackTransition();
-        trackBars=0;
+      // Tracks normally live for 8-16 bars. Faster-changing tracks are avoided
+      // unless the screen itself changed, which keeps the soundtrack calm.
+      if(trackBars>=12 && Math.random()<.30) beginTrackTransition(mood);
+      if(transitionQueued) applyPendingTrack();
+    }
+
+    intensity+=(intensityTarget-intensity)*.12;
+    sceneMix+=(sceneTarget-sceneMix)*.16;
+
+    if(pos===0){
+      currentChord=pickChord(mood);
+      const beat=trackBeatMs(currentTrack);
+      const padDur=beat*BEATS_PER_BAR/1000*1.12;
+      const active=layerForIntensity();
+
+      // Core bed. This is always present and intentionally quiet.
+      playPad(currentChord,padDur,.028+active*.012,720+active*720,currentTrack,trackGain);
+      playBass(currentChord[0]/2,0,.030+active*.024,currentTrack,beat,trackGain);
+
+      // A little higher melodic color only appears on stronger moments.
+      if(active>.20 && currentTrack.density>.28){
+        playPluck(currentChord[2]*2,.08,.008+active*.009,currentTrack,trackGain);
       }
     }
 
-    intensity+=(intensityTarget-intensity)*.10;
-    sceneMix+=(sceneTarget-sceneMix)*.22;
-    updateDroneLevel();
-
-    if(barPos===0){
-      pickBarChord();
-      const beatMs=trackBeatMs(currentTrack);
-      const peak=currentBarBright
-        ? .040
-        : (.047+intensity*.024);
-      const cutoff=currentBarBright
-        ? 1700
-        : (900+intensity*850);
-      const padDur=(beatMs*BEATS_PER_BAR/1000)*1.08;
-      playTrackPad(currentBarChord,padDur,peak,cutoff,currentTrack);
-      playTrackBass(currentBarChord[0]/2,0,currentBarBright?.052:(.073+intensity*.034),currentTrack,beatMs);
-
-      // Different tracks get different little opening motifs.
-      if(currentTrack.style==='glass'){
-        playTrackPluck(currentBarChord[2]*2,.06,.020,currentTrack);
-        playTrackPluck(currentBarChord[3]*2,.29,.016,currentTrack);
-      } else if(currentTrack.style==='neon'){
-        playTrackPluck(currentBarChord[0]*2,.03,.022,currentTrack);
-        playTrackPluck(currentBarChord[2]*4,.22,.018,currentTrack);
-      } else if(currentTrack.style==='space'){
-        playTrackPluck(currentBarChord[1]*2,.18,.014,currentTrack);
+    if(pos===1 && currentChord){
+      const active=layerForIntensity();
+      if(active>.18 && Math.random()<.22+currentTrack.density*.28){
+        const n=currentChord[(chordIndex+1)%currentChord.length]*(mood==='shop'?4:2);
+        playPluck(n,.04,.007+active*.008,currentTrack,trackGain);
       }
     }
 
-    if(barPos===1){
-      const chance=.20+currentTrack.density*.34+intensity*.12;
-      if(Math.random()<chance){
-        const note=currentBarChord[(gameChordIdx+1)%currentBarChord.length]*(currentBarBright?4:2);
-        playTrackPluck(note,.05,currentBarBright?.021:.018,currentTrack);
+    if(pos===2 && currentChord){
+      const active=layerForIntensity();
+      if(active>.32 && Math.random()<.18+currentTrack.density*.34){
+        playBass(currentChord[0]/2,0,.018+active*.014,currentTrack,trackBeatMs(currentTrack),trackGain);
+      }
+      if(mood==='shop' && Math.random()<.24){
+        playPluck(currentChord[(variation+2)%currentChord.length]*4,.015,.007,currentTrack,trackGain);
       }
     }
 
-    if(barPos===2){
-      if(Math.random()<.22+currentTrack.density*.52+intensity*.18){
-        playTrackBass(currentBarChord[0]/2*(currentTrack.style==='neon'?1.5:1),0,.042+intensity*.018,currentTrack,trackBeatMs(currentTrack));
-      }
-      if(Math.random()<.20+currentTrack.density*.42){
-        const note=currentBarChord[Math.floor(Math.random()*currentBarChord.length)]*(currentBarBright?4:2);
-        playTrackPluck(note,.02,currentBarBright?.023:.026,currentTrack);
-      }
+    if(pos===3 && currentChord && intensity>.42 && Math.random()<.14+currentTrack.density*.26){
+      playPluck(currentChord[Math.floor(Math.random()*currentChord.length)]*3,.035,.006+intensity*.005,currentTrack,trackGain);
     }
 
-    if(barPos===3&&currentTrack.style!=='space'){
-      if(Math.random()<.16+currentTrack.density*.45){
-        const note=currentBarChord[Math.floor(Math.random()*currentBarChord.length)]*3;
-        playTrackPluck(note,.04,currentBarBright?.018:.017,currentTrack);
-      }
+    // Percussion stays almost subliminal. It adds motion without taking over.
+    if((mood==='shop'||mood==='game') && (intensity>.18||currentTrack.density>.5)){
+      playSoftPerc(currentTrack,pos,trackGain);
     }
-
-    // Each track keeps the shop upbeat in a different way without becoming a
-    // completely separate song, preserving a smooth scene transition.
-    if(currentBarBright){
-      const arpIndex=beatCount%currentBarChord.length;
-      const arp=currentBarChord[arpIndex]*4;
-      const arpGain=currentTrack.style==='space'?.010:.014+currentTrack.density*.006;
-      playTrackPluck(arp,.01,arpGain,currentTrack);
-    }
-
-    playTrackPerc(currentTrack,barPos);
 
     beatCount++;
     musicTimer=setTimeout(musicStep,trackBeatMs(currentTrack));
   }
 
   function startMusic(){
-    ac();
-    startDrone();
-    if(musicRunning) return;
-    musicRunning=true;
-    beatCount=0;
-    trackBars=0;
-    currentTrackIndex=chooseTrack(false);
-    if(currentTrackIndex===lastTrackIndex) currentTrackIndex=(currentTrackIndex+1)%MUSIC_TRACKS.length;
-    lastTrackIndex=currentTrackIndex;
+    ac();ensureAudioBus();
+    if(musicRunning)return;
+    musicRunning=true;beatCount=0;trackBars=0;variation=0;
+    const mood=getMusicMood();
+    currentTrackIndex=chooseTrackForMood(mood,-1);
     currentTrack=MUSIC_TRACKS[currentTrackIndex];
-    gameChordIdx=0;
-    intensity=intensityTarget=computeIntensityTarget();
-    sceneMix=sceneTarget=(typeof AppState!=='undefined'&&AppState.currentScreen==='SHOP')?1:0;
-    trackGain=createTrackBus();
-    trackGain.gain.value=.0001;
-    trackGain.gain.linearRampToValueAtTime(.88,ac().currentTime+1.4);
-    updateDroneLevel();
+    currentChord=null;chordIndex=Math.floor(Math.random()*currentTrack.chords.length);
+    intensity=intensityTarget=targetIntensity();
+    sceneMix=sceneTarget=(mood==='shop'||mood==='menu'||mood==='victory')?1:0;
+    lastMood=mood;lastScreen=typeof AppState!=='undefined'?AppState.currentScreen:'';
+    trackGain=ac().createGain();trackGain.gain.value=.0001;trackGain.connect(musicBus);
+    trackGain.gain.exponentialRampToValueAtTime(.68,ac().currentTime+1.8);
     musicStep();
   }
 
   function stopMusic(){
     musicRunning=false;
-    if(musicTimer) clearTimeout(musicTimer);
+    if(musicTimer)clearTimeout(musicTimer);
     musicTimer=null;
     if(trackGain&&ctx){
-      const old=trackGain;
-      const now=ctx.currentTime;
+      const old=trackGain,now=ctx.currentTime;
       old.gain.cancelScheduledValues(now);
       old.gain.setValueAtTime(Math.max(.0001,old.gain.value),now);
-      old.gain.exponentialRampToValueAtTime(.0001,now+1.8);
-      setTimeout(()=>{try{old.disconnect();}catch(e){}},2100);
-      trackGain=null;
+      old.gain.exponentialRampToValueAtTime(.0001,now+1.6);
+      setTimeout(()=>{try{old.disconnect();}catch(e){}},2000);
     }
-    updateDroneLevel();
+    trackGain=null;transitionQueued=false;pendingTrackIndex=-1;
   }
 
-  window.__music = {
-    start:startMusic,
-    stop:stopMusic,
-    next:function(){ if(musicRunning) beginTrackTransition(); },
-    getTrack:function(){ return currentTrack ? currentTrack.name : null; },
+  window.__music={
+    start:startMusic,stop:stopMusic,
+    next:function(){beginTrackTransition(getMusicMood());},
+    getTrack:function(){return currentTrack?currentTrack.name:null;},
+    getMood:getMusicMood,
     tracks:MUSIC_TRACKS.map(t=>t.name)
   };
 
@@ -5264,6 +5220,211 @@ render();
   // hint to install
   try{if(navigator.standalone===false&&!localStorage.getItem('a2hs')){localStorage.setItem('a2hs','1');
     setTimeout(()=>toast('Tip: Share → Add to Home Screen for full-screen play'),2500);}}catch(e){}
+})();
+
+/* ===== accuracy + feel pass (JS) ===== */
+window.stk=id=>{const o=StakeRegistry.map(x=>x.id);return o.indexOf(AppState.stakeId)>=o.indexOf(id)&&o.indexOf(id)>=0;};
+(function(){
+  // haptics: Android vibrate; iOS 17.4+ via hidden switch-input trick
+  const lab=document.createElement('label');lab.id='hapt';lab.innerHTML='<input type="checkbox" switch>';document.body.appendChild(lab);
+  window.haptic=(ms=8)=>{try{if(navigator.vibrate){navigator.vibrate(ms);}else lab.click();}catch(e){}};
+  const tapWrap=n=>{const o=window[n];if(typeof o!=='function')return;window[n]=function(){haptic(n==='playHand'?18:8);return o.apply(this,arguments);};};
+  ['toggleCard','sortHandClick','discardHand','playHand','collectReward','buyReworkedShopItem','rerollReworkedShop','startBlind'].forEach(tapWrap);
+  // HUD extras after every game render
+  const oR=window.renderGame;
+  window.renderGame=function(){
+    oR.apply(this,arguments);
+    try{
+      const row=document.querySelector('.scoring-row');if(!row)return;
+      const bar=document.createElement('div');bar.className='progress-bar';
+      bar.innerHTML='<i style="width:'+Math.min(100,AppState.score/AppState.targetScore*100)+'%"></i>';row.after(bar);
+      const sel=AppState.hand.filter((_,i)=>AppState.selectedIndices.has(i));
+      const line=bar.nextElementSibling;
+      if(sel.length&&line){const p=resolveHand(sel,true),v=Math.floor(p.chips*p.mult),need=AppState.targetScore-AppState.score;
+        line.insertAdjacentHTML('beforeend',' <span class="proj'+(v>=need?' win':'')+'">'+(AppState.jokers.some(j=>/^(misprint|bloodstone)$/.test(j.defId))||sel.some(c=>c.enhancement==='lucky')?'≈ ':'= ')+v.toLocaleString()+(v>=need?' ✓ clears blind':'')+'</span>');}
+      const hub=document.querySelector('.hub-btn-row');
+      if(hub){const tot=AppState.deck.length+AppState.hand.length+AppState.discardPile.length;
+        hub.insertAdjacentHTML('beforeend','<span class="deck-chip">🂠 '+AppState.deck.length+'/'+tot+'</span>');}
+    }catch(e){}
+  };
+  // swipe across the hand to select several cards at once
+  let vis=null,moved=false;
+  const idx=(x,y)=>{const el=document.elementFromPoint(x,y)?.closest('.hand-card-wrapper');return el?+el.dataset.index:-1;};
+  document.addEventListener('touchstart',e=>{const t=e.target.closest?.('.hand-card-wrapper');vis=t?new Set([+t.dataset.index]):null;moved=false;},{passive:true});
+  document.addEventListener('touchmove',e=>{if(!vis)return;const t=e.touches[0],i=idx(t.clientX,t.clientY);
+    if(i>=0&&!vis.has(i)){vis.add(i);moved=true;document.querySelectorAll('.hand-card-wrapper')[i]?.firstElementChild.classList.add('swipe-pick');haptic(5);}},{passive:true});
+  document.addEventListener('touchend',()=>{if(vis&&moved&&vis.size>1&&!AppState.isScoring){
+      vis.forEach(i=>{if(AppState.selectedIndices.has(i))AppState.selectedIndices.delete(i);else if(AppState.selectedIndices.size<5)AppState.selectedIndices.add(i);});
+      const forced=AppState.forceSelectedUid;if(forced!==null&&forced!==undefined){const k=AppState.hand.findIndex(c=>c.uid===forced);if(k>=0)AppState.selectedIndices.add(k);}
+      renderGame();window.__swiped=true;setTimeout(()=>window.__swiped=false,350);}
+    vis=null;},{passive:true});
+  document.addEventListener('click',e=>{if(window.__swiped){e.stopPropagation();e.preventDefault();}},true);
+})();
+
+/* ===== data audit, tags, real shop & packs, card info, undo ===== */
+(function(){
+const J=JokerDefinitions,V=VoucherDefinitions,toast=m=>window.showToast&&showToast(m);
+// --- Joker rarity / cost corrections (vs. the real game) ---
+const fix={sly:['Common',3],wily:['Common',4],clever:['Common',4],devious:['Common',4],crafty:['Common',4],fibonacci:['Uncommon',8],egg:['Common',4],square:['Common',4],icecream:['Common',5],popcorn:['Common',5],ridebus:['Common',6],green:['Common',4],runner:['Common',5],grosmichel:['Common',5],splash:['Common',3],baron:['Rare',8],moon:['Common',5],abstract:['Common',4],credit:['Common',1],flowerpot:['Uncommon',6],chad:['Common',4],mime:['Uncommon',5],dusk:['Uncommon',5],acrobat:['Uncommon',6],troubadour:['Uncommon',6],certificate:['Uncommon',6],space:['Uncommon',5],sixthsense:['Uncommon',6],constellation:['Uncommon',6],hologram:['Uncommon',7],vampire:['Uncommon',7],midas:['Uncommon',7],luchador:['Uncommon',5],giftcard:['Uncommon',6],turtlebean:['Uncommon',6],erosion:['Uncommon',6],reservedparking:['Common',6],mailin:['Common',4],tothemoon:['Uncommon',5],hallucination:['Common',4],fortuneteller:['Common',6],juggler:['Common',4],drunkard:['Common',4],stonejoker:['Uncommon',6],goldenticket:['Common',5],mrbones:['Uncommon',5],showman:['Uncommon',5],duo:['Rare',8],trio:['Rare',8],family:['Rare',8],order:['Rare',8],tribe:['Rare',8],stuntman:['Rare',7],invisible:['Rare',8],satellite:['Uncommon',6],cartomancer:['Uncommon',6],astronomer:['Uncommon',8],burnt:['Rare',8],bootstraps:['Uncommon',7],riffraff:['Common',6],dna:['Rare',8],wee:['Rare',8],merryandy:['Uncommon',7],oopsall6s:['Uncommon',4],idol:['Uncommon',6],seeingdouble:['Uncommon',6],matador:['Uncommon',7],hittheroad:['Rare',8],campfire:['Uncommon',9],cardsharp:['Uncommon',6],glassjoker:['Uncommon',6],luckycat:['Uncommon',6],rocket:['Uncommon',6],superposition:['Common',4],swashbuckler:['Common',4],throwback:['Uncommon',6],vagabond:['Rare',8]};
+Object.entries(fix).forEach(([id,[r,c]])=>{if(J[id]){J[id].rarity=r;J[id].cost=c;}});
+// --- behaviour fixes ---
+Object.assign(J.egg,{effect:'eggSell',desc:'Gains $3 of sell value each round'});JokerHandlers.eggSell=()=>null;
+Object.assign(J.popcorn,{desc:'+20 Mult, -4 per round'});
+Object.assign(J.runner,{desc:'+15 Chips permanently if hand has a Straight'});
+Object.assign(J.square,{desc:'Gains +4 Chips if hand has exactly 4 cards'});
+JokerHandlers.exactSizeChips=(def,inst)=>{const v=(inst.state&&inst.state.value)||0;return v>0?{chips:v,log:'+'+v+' Chips'}:null;};
+Object.assign(J.ramen,{desc:'×2 Mult, -×0.01 per card discarded'});
+Object.assign(J.flowerpot,{value:3,desc:'×3 Mult if hand has all 4 suits'});
+const oGS=getJokerCurrentStat;window.getJokerCurrentStat=function(j){const d=J[j&&j.defId];return d&&d.id==='square'?'+'+((j.state&&j.state.value)||0)+' Chips':oGS.apply(this,arguments);};
+const oUJ=updateJokerStates;window.updateJokerStates=function(sel,sc,hn){
+  const snap=AppState.jokers.map(j=>j.state.value);oUJ.apply(this,arguments);
+  AppState.jokers.forEach((j,i)=>{const id=J[j.defId]&&J[j.defId].id;
+    if(id==='runner'&&!/Straight/.test(hn))j.state.value=snap[i];
+    if(id==='popcorn')j.state.value=snap[i];
+    if(id==='square'&&sel.length===4)j.state.value=(j.state.value||0)+4;});};
+// vouchers: real costs & text
+Object.values(V).forEach(v=>v.cost=10);
+Object.assign(V.overstockplus,{desc:'+1 more shop card slot'});Object.assign(V.palette,{desc:'+1 more Hand Size'});
+Object.assign(V.nachotong,{desc:'+1 more Hand per round'});Object.assign(V.recycler,{desc:'+1 more Discard per round'});
+Object.assign(V.hieroglyph,{desc:'-1 Ante, -1 Hand per round'});Object.assign(V.petroglyph,{desc:'-1 Ante, -1 Discard per round'});
+// --- TAGS ---
+const TAGS={economy:['💵','Economy Tag','Double your money (max +$40)'],speed:['⚡','Speed Tag','$5 per Blind skipped this run'],handy:['🖐️','Handy Tag','$1 per hand played this run'],garbage:['🗑️','Garbage Tag','$1 per unused discard this run'],orbital:['🪐','Orbital Tag','Upgrade a random hand by 3 levels'],juggle:['🤹','Juggle Tag','+3 Hand Size next round'],topup:['🃏','Top-up Tag','Create up to 2 Common Jokers'],investment:['📈','Investment Tag','$25 after defeating the next Boss'],double:['✌️','Double Tag','Copies the next Tag you gain'],coupon:['🎟️','Coupon Tag','Next shop cards and packs are free'],uncommon:['🟢','Uncommon Tag','Free Uncommon Joker in next shop'],rare:['🔴','Rare Tag','Free Rare Joker in next shop'],negative:['⚫','Negative Tag','Free Negative Joker in next shop'],foil:['✨','Foil Tag','Free Foil Joker in next shop'],holo:['🌈','Holographic Tag','Free Holographic Joker in next shop'],poly:['💎','Polychrome Tag','Free Polychrome Joker in next shop'],standard:['🂠','Standard Tag','Free Mega Standard Pack next shop'],charm:['🔮','Charm Tag','Free Mega Arcana Pack next shop'],meteor:['☄️','Meteor Tag','Free Mega Celestial Pack next shop'],buffoon:['🤡','Buffoon Tag','Free Mega Buffoon Pack next shop'],ethereal:['👻','Ethereal Tag','Free Spectral Pack next shop']};
+const LATE=['rare','negative','foil','holo','poly','orbital','handy','garbage','investment'];
+window.TAGS=TAGS;
+const oSR=window.startRun;if(oSR)window.startRun=function(){AppState.tags=[];AppState.tagJuggle=0;AppState.investment=0;AppState.anteTags=null;AppState.doubleTag=false;U=null;return oSR.apply(this,arguments);};
+AppState.tags=AppState.tags||[];AppState.tagJuggle=AppState.tagJuggle||0;AppState.investment=AppState.investment||0;
+function rollTags(){const ids=Object.keys(TAGS).filter(t=>AppState.ante>=2||!LATE.includes(t));const a=randPick(ids);let b=randPick(ids.filter(x=>x!==a));return [a,b];}
+function giveTag(id){const n=(AppState.doubleTag&&id!=='double')?2:1;if(n===2)AppState.doubleTag=false;
+  for(let k=0;k<n;k++){const st=AppState.stats;
+    if(id==='economy')AppState.money+=Math.min(40,Math.max(0,AppState.money));
+    else if(id==='speed')AppState.money+=5*st.blindsSkipped;
+    else if(id==='handy')AppState.money+=st.handsPlayed||0;
+    else if(id==='garbage')AppState.money+=st.unusedDiscards||0;
+    else if(id==='orbital'){const h=randPick(Object.keys(POKER_HANDS).slice(0,9));AppState.handLevels[h]=(AppState.handLevels[h]||1)+3;toast('🪐 '+h+' +3 levels');}
+    else if(id==='juggle')AppState.tagJuggle=1;
+    else if(id==='topup'){const pool=Object.values(J).filter(d=>d.rarity==='Common');for(let i=0;i<2&&AppState.jokers.length<calcJokerSlots();i++)AppState.jokers.push(createJokerInstance(randPick(pool).id));}
+    else if(id==='investment')AppState.investment+=25;
+    else if(id==='double')AppState.doubleTag=true;
+    else AppState.tags.push(id);}}
+window.giveTag=giveTag;
+const oRBS=window.renderBlindSelect;
+window.renderBlindSelect=function(){
+  if(!AppState.anteTags||AppState.anteTags.ante!==AppState.ante)AppState.anteTags={ante:AppState.ante,tags:rollTags()};
+  oRBS.apply(this,arguments);
+  try{const t=TAGS[AppState.anteTags.tags[AppState.blindIndex]],b=document.querySelector('button[onclick="skipBlind()"]');
+    if(b&&t){b.innerHTML='SKIP → '+t[0]+' '+t[1];b.insertAdjacentHTML('afterend','<div class="tag-desc">'+t[2]+'</div>');}
+    const pend=AppState.tags.map(x=>TAGS[x]).filter(Boolean).map(t=>'<span class="tag-pill">'+t[0]+' '+t[1]+'</span>');
+    if(AppState.tagJuggle)pend.push('<span class="tag-pill">🤹 Juggle</span>');if(AppState.investment)pend.push('<span class="tag-pill">📈 $'+AppState.investment+' after Boss</span>');
+    const c=document.querySelector('.blind-select-container');if(c&&pend.length)c.insertAdjacentHTML('afterbegin','<div class="tag-row">'+pend.join('')+'</div>');}catch(e){}
+};
+window.skipBlind=function(){if(AppState.blindIndex>1)return;const id=AppState.anteTags&&AppState.anteTags.tags[AppState.blindIndex];
+  AppState.stats.blindsSkipped++;const t=TAGS[id];if(id)giveTag(id);if(t)toast(t[0]+' '+t[1]+' — '+t[2]);
+  AppState.blindStatus[AppState.blindIndex]=true;AppState.blindIndex++;AppState.score=0;try{SFX.skipBlind();}catch(e){}render();};
+// per-round upkeep (once per round, before the payout screen)
+const oRO=window.renderRoundOver;
+window.renderRoundOver=function(){
+  if(!AppState.roundRewardProcessed){const st=AppState.stats;st.unusedDiscards=(st.unusedDiscards||0)+AppState.discardsLeft;
+    AppState.jokers=AppState.jokers.filter(j=>{const d=J[j.defId];if(!d)return true;
+      if(d.id==='egg')j.state.sellBonus=(j.state.sellBonus||0)+3;
+      if(d.id==='popcorn'){j.state.value=(j.state.value===undefined?20:j.state.value)-4;if(j.state.value<=0){toast('🍿 Popcorn was eaten');return false;}}
+      return true;});
+    if(AppState.tagJuggle===2)AppState.tagJuggle=0;
+    if(AppState.blindIndex===2&&AppState.investment>0){AppState.money+=AppState.investment;toast('📈 Investment Tag: +$'+AppState.investment);AppState.investment=0;}}
+  return oRO.apply(this,arguments);};
+const oSB=window.startBlind;window.startBlind=function(){if(AppState.tagJuggle===1)AppState.tagJuggle=2;return oSB.apply(this,arguments);};
+// Ramen: loses ×0.01 per discarded card; destroyed at ×1
+const oDH=window.discardHand;window.discardHand=function(){const n=AppState.selectedIndices.size,b=AppState.discardsLeft;const r=oDH.apply(this,arguments);
+  if(AppState.discardsLeft<b&&n)AppState.jokers=AppState.jokers.filter(j=>{if(J[j.defId]&&J[j.defId].id==='ramen'){j.state.value=(j.state.value===undefined?2:j.state.value)-0.01*n;if(j.state.value<=1){toast('🍜 Ramen was eaten');return false;}}return true;});return r;};
+// --- real shop: rarity-weighted Jokers, Tarot/Planet slots, Overstock, tag items ---
+function pickJoker(used,force){const owned=new Set(AppState.jokers.map(j=>j.defId)),show=AppState.jokers.some(j=>J[j.defId]&&J[j.defId].id==='showman');
+  const x=rng(),r=force||(x<.7?'Common':x<.95?'Uncommon':'Rare');
+  let pool=Object.values(J).filter(d=>d.rarity===r&&(show||(!owned.has(d.id)&&!used.has(d.id))));if(!pool.length)pool=Object.values(J).filter(d=>d.rarity!=='Legendary');return randPick(pool);}
+function consItem(type){let pool=Object.values(type==='tarot'?TarotDefinitions:PlanetDefinitions);
+  if(type==='planet')pool=pool.filter(d=>!d.hand||!['Five of a Kind','Flush House','Flush Five'].includes(d.hand)||(AppState.stats.handsPerType[d.hand]||0)>0);
+  const d=randPick(pool);return{kind:'consumable',ctype:type,defId:d.id,baseCost:d.cost,cost:d.cost,icon:d.icon,name:d.name,desc:d.desc||('Upgrade '+d.hand)};}
+const PT={standard:makeStandardPack,charm:makeArcanaPack,meteor:makeCelestialPack,buffoon:makeBuffoonPack,ethereal:makeSpectralPack};
+const PD={standard:'3 cards · choose 1',arcana:'3 Tarots · choose 1',celestial:'3 Planets · choose 1',buffoon:'2 Jokers · choose 1',spectral:'2 Spectrals · choose 1'};
+const MD={standard:'5 cards · choose 2',arcana:'5 Tarots · choose 2',celestial:'5 Planets · choose 2',buffoon:'4 Jokers · choose 2',spectral:'4 Spectrals · choose 2'};
+const oGen=window.generateReworkedShop;
+window.generateReworkedShop=function(){
+  const rest=oGen().filter(x=>x.kind!=='joker');rest.forEach(x=>{if(x.kind==='pack')x.desc=PD[x.packType]||x.desc;});
+  const n=2+(voucherActive('overstock')?1:0)+(voucherActive('overstockplus')?1:0),used=new Set(),cards=[];
+  const tw=voucherActive('tarottycoon')?16:voucherActive('tarotmerchant')?8:4,pw=voucherActive('planettycoon')?16:voucherActive('planetmerchant')?8:4;
+  for(let i=0;i<n;i++){const r=rng()*(20+tw+pw);
+    if(r<20){const d=pickJoker(used);used.add(d.id);cards.push(makeShopJoker(d));}else cards.push(consItem(r<20+tw?'tarot':'planet'));}
+  const items=[...cards,...rest],keep=[];
+  for(const t of AppState.tags){
+    if(t==='coupon')items.forEach(x=>{if(x.kind!=='voucher'){x.baseCost=0;x.cost=0;}});
+    else if(t==='uncommon'||t==='rare'||['negative','foil','holo','poly'].includes(t)){
+      const d=pickJoker(used,t==='rare'?'Rare':t==='uncommon'?'Uncommon':undefined);used.add(d.id);const it=makeShopJoker(d);
+      if(!['uncommon','rare'].includes(t))it.shopJoker.edition=t;it.baseCost=0;it.cost=0;if(TAGS[t])it.name=TAGS[t][1].replace(' Tag','')+' '+it.name;items.unshift(it);}
+    else if(PT[t]){const p=PT[t]();p.mega=true;p.baseCost=0;p.cost=0;p.name='Mega '+p.name;p.desc=MD[p.packType]||p.desc;items.push(p);}
+    else keep.push(t);}
+  AppState.tags=keep;return items;};
+// buying: consumables from the shop, Hieroglyph/Petroglyph ante drop
+const oBuy=window.buyReworkedShopItem;
+window.buyReworkedShopItem=function(i){const it=AppState.shopItems[i];
+  if(it&&it.kind==='consumable'){if(AppState.money<it.cost)return;
+    if(AppState.consumables.length>=calcConsumableSlots()){showModal('❌','No consumable slots!');return;}
+    pushUndo('purchase');AppState.money-=it.cost;AppState.consumables.push({type:it.ctype,defId:it.defId,uid:'c'+Math.floor(rng()*1e9)});
+    AppState.shopItems.splice(i,1);try{SFX.buy();}catch(e){}saveRun();renderShop();return;}
+  pushUndo(it&&it.kind==='voucher'?'purchase':'purchase');const nv=AppState.vouchers.length;const r=oBuy.apply(this,arguments);
+  if(AppState.vouchers.length>nv){const v=AppState.vouchers[AppState.vouchers.length-1];if(v==='hieroglyph'||v==='petroglyph'){AppState.ante=Math.max(1,AppState.ante-1);toast('Ante -1');}}return r;};
+// --- packs: real sizes, Mega packs, Standard enhancements, Telescope ---
+const shuf=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(rng()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;};
+window.openShopPack=function(index){const it=AppState.shopItems[index];if(!it||it.kind!=='pack'||AppState.money<it.cost)return;
+  AppState.money-=it.cost;AppState.shopItems.splice(index,1);U=null;const m=!!it.mega,max=m?2:1,t=it.packType;
+  if(t==='standard'){const cards=Array.from({length:m?5:3},()=>{const c=createCard(randPick(RANKS),randPick(SUITS));
+      if(rng()<.4)c.enhancement=randPick(['bonus','mult','wild','glass','steel','gold','lucky']);if(rng()<.2)c.seal=randPick(['red','blue','gold','purple']);return c;});
+    AppState.pendingPack={type:'standard',cards,max};}
+  else if(t==='buffoon'){const used=new Set(),cards=[];for(let i=0;i<(m?4:2);i++){const d=pickJoker(used);used.add(d.id);cards.push(d);}AppState.pendingPack={type:'buffoon',cards,max};}
+  else if(t==='arcana')AppState.pendingPack={type:'tarot',cards:shuf(Object.values(TarotDefinitions)).slice(0,m?5:3),max};
+  else if(t==='celestial'){let pl=shuf(Object.values(PlanetDefinitions).filter(d=>!d.hand||!['Five of a Kind','Flush House','Flush Five'].includes(d.hand)||(AppState.stats.handsPerType[d.hand]||0)>0));
+    if(voucherActive('telescope')){const ph=AppState.stats.handsPerType||{},top=Object.keys(ph).sort((a,b)=>ph[b]-ph[a])[0],p=Object.values(PlanetDefinitions).find(d=>d.hand===top);if(p)pl=[p,...pl.filter(x=>x!==p)];}
+    AppState.pendingPack={type:'planet',cards:pl.slice(0,m?5:3),max};}
+  else AppState.pendingPack={type:'spectral',cards:shuf(Object.values(SpectralDefinitions)).slice(0,m?4:2),max};
+  renderPackModal();};
+// --- UNDO ---
+let U=null;const RUN_KEY=RUN_SAVE_KEY;
+function light(){return{sel:[...AppState.selectedIndices],hand:AppState.hand.map(c=>c.uid),jok:AppState.jokers.map(j=>j.uid),sort:AppState.sortMode};}
+window.pushUndo=function(label){try{U=AppState.currentScreen==='SHOP'?{full:serializeRun(),label}:{light:light(),label};}catch(e){U=null;}};
+window.doUndo=function(){if(!U)return;const u=U;U=null;
+  if(u.full){localStorage.setItem(RUN_KEY,u.full);loadSavedRun();saveRun();try{SFX.click();}catch(e){}render();toast('↩ Undid '+u.label);}
+  else{const h=new Map(u.light.hand.map((x,i)=>[x,i])),k=new Map(u.light.jok.map((x,i)=>[x,i]));
+    AppState.hand.sort((a,b)=>h.get(a.uid)-h.get(b.uid));AppState.jokers.sort((a,b)=>k.get(a.uid)-k.get(b.uid));AppState.sortMode=u.light.sort;AppState.selectedIndices=new Set(u.light.sel);renderGame();toast('↩ Undid '+u.label);}};
+const wrapU=(n,label,pre)=>{const o=window[n];if(typeof o!=='function')return;window[n]=function(){if(!pre||pre.apply(this,arguments))pushUndo(label);return o.apply(this,arguments);};};
+['sortHandClick','onJokerDrop'].forEach(n=>wrapU(n,n==='sortHandClick'?'sort':'joker order'));
+wrapU('moveJoker','joker order');wrapU('sellManagedJoker','sale');wrapU('onShopJokerDrop','joker order');
+['rerollReworkedShop','nextRound','playHand','discardHand'].forEach(n=>{const o=window[n];if(typeof o==='function')window[n]=function(){U=null;return o.apply(this,arguments);};});
+const addUndo=(sel)=>{const box=document.querySelector(sel);if(box&&U)box.insertAdjacentHTML('beforeend','<button class="small undo-btn" onclick="doUndo()">↩ UNDO '+U.label.toUpperCase()+'</button>');};
+const oRG=window.renderGame;window.renderGame=function(){oRG.apply(this,arguments);try{addUndo('.hub-btn-row');}catch(e){}};
+const oRS=window.renderShop;window.renderShop=function(){oRS.apply(this,arguments);try{addUndo('.shop-footer-actions');}catch(e){}};
+// --- long-press info sheet + tap felt to clear selection ---
+const ENH={bonus:'+30 Chips when scored',mult:'+4 Mult when scored',wild:'Counts as every suit',glass:'×2 Mult · 1 in 4 chance to shatter',steel:'×1.5 Mult while held in hand',stone:'+50 Chips · no rank or suit · always scores',gold:'$3 if held at end of round',lucky:'1 in 5: +20 Mult · 1 in 15: $20'};
+const EDN={foil:'+50 Chips',holo:'+10 Mult',poly:'×1.5 Mult',negative:'+1 Joker slot'};
+const SEAL={red:'Retriggers this card once',blue:'Makes a Planet for your last hand if held at round end',gold:'$3 when played and scored',purple:'Makes a Tarot when discarded'};
+const SN={'♠':'Spades','♥':'Hearts','♣':'Clubs','♦':'Diamonds'};
+function sheet(h,body){closeSheet();const d=document.createElement('div');d.className='sheet';d.id='infoSheet';d.innerHTML='<h3>'+h+'</h3>'+body+'<small>Tap anywhere to close</small>';d.onclick=closeSheet;document.getElementById('app').appendChild(d);haptic(12);}
+function closeSheet(){const d=document.getElementById('infoSheet');if(d)d.remove();}
+function cardInfo(c){const rc={A:11,K:10,Q:10,J:10}[c.rank]||+c.rank;let b='';
+  if(c.faceDown)return sheet('Face-down card','<p>You can’t see this card yet.</p>');
+  if(c.enhancement==='stone')b+='<p><b>Stone</b> — '+ENH.stone+'</p>';else b+='<p>Worth <b>'+rc+' Chips</b> when it scores.</p>';
+  if(c.enhancement&&c.enhancement!=='stone')b+='<p><b>'+c.enhancement[0].toUpperCase()+c.enhancement.slice(1)+'</b> — '+(ENH[c.enhancement]||'')+'</p>';
+  if(c.edition)b+='<p><b>'+c.edition+'</b> — '+(EDN[c.edition]||'')+'</p>';if(c.seal)b+='<p><b>'+c.seal+' seal</b> — '+SEAL[c.seal]+'</p>';
+  if(c.debuffed)b+='<p style="color:#ff9a9a">Debuffed: scores nothing this round.</p>';
+  sheet(c.enhancement==='stone'?'Stone Card':c.rank+' of '+SN[c.suit],b);}
+function consInfo(c){const d=(c.type==='tarot'?TarotDefinitions:c.type==='spectral'?SpectralDefinitions:PlanetDefinitions)[c.defId];if(!d)return;let b='<p>'+(d.desc||'')+'</p>';
+  if(d.hand){const P=POKER_HANDS[d.hand],lv=AppState.handLevels[d.hand]||1;b='<p>Levels up <b>'+d.hand+'</b> (now Lv.'+lv+').</p><p>+'+P.levelChips+' Chips · +'+P.levelMult+' Mult per level.</p>';}
+  sheet(d.icon+' '+d.name,b+'<p style="opacity:.7">Tap the card normally to use it.</p>');}
+let lt=null,sx=0,sy=0;
+const kill=()=>{clearTimeout(lt);lt=null;};
+document.addEventListener('touchstart',e=>{kill();const el=e.target.closest&&e.target.closest('.hand-card-wrapper,.consumable-slot:not(.empty)');if(!el)return;const t=e.touches[0];sx=t.clientX;sy=t.clientY;
+  lt=setTimeout(()=>{lt=null;if(el.classList.contains('hand-card-wrapper')){const c=AppState.hand[+el.dataset.index];if(c)cardInfo(c);}
+    else{const i=[...el.parentNode.children].indexOf(el),c=AppState.consumables[i];if(c)consInfo(c);}
+    window.__swiped=true;setTimeout(()=>window.__swiped=false,400);},450);},{passive:true});
+document.addEventListener('touchmove',e=>{if(lt){const t=e.touches[0];if(Math.abs(t.clientX-sx)>10||Math.abs(t.clientY-sy)>10)kill();}},{passive:true});
+['touchend','touchcancel'].forEach(n=>document.addEventListener(n,kill,{passive:true}));
+document.addEventListener('click',e=>{if(e.target&&e.target.id==='handContainer'&&AppState.selectedIndices&&AppState.selectedIndices.size&&!AppState.isScoring){AppState.selectedIndices=new Set();renderGame();}});
 })();
 </script>
 </body>
