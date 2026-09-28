@@ -607,22 +607,41 @@ input[type="range"].settings-slider::-moz-range-thumb { width:20px; height:20px;
 @keyframes score-flash{0%{opacity:0}25%{opacity:1}100%{opacity:0}}
 
 
-/* ===== iPhone / touch pass ===== */
-html{-webkit-text-size-adjust:100%}
-*{touch-action:manipulation}
+/* ===== iPhone / viewport-locked touch pass ===== */
+html{-webkit-text-size-adjust:100%;width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none}
+body{width:100%;height:100%;overflow:hidden;overscroll-behavior:none;touch-action:none}
+*{touch-action:none}
+button,input,select,textarea{touch-action:none}
+#app{width:100%;height:100dvh;min-height:0;overflow:hidden}
+.screen{
+  flex:0 0 calc(100% / var(--screen-fit,1)); min-height:0; min-width:0; overflow:hidden !important;
+  overscroll-behavior:none !important; -webkit-overflow-scrolling:auto !important;
+  scrollbar-width:none;
+  transform:scale(var(--screen-fit,1));
+  transform-origin:top center;
+  width:calc(100% / var(--screen-fit,1));
+  height:calc(100% / var(--screen-fit,1));
+  margin-left:auto; margin-right:auto;
+}
+.screen::-webkit-scrollbar{display:none}
+.modal-overlay{overflow:hidden !important;touch-action:none}
+.modal-box{
+  max-height:none !important; max-width:calc(100% - 20px);
+  overflow:hidden !important;
+  transform:scale(var(--modal-fit,1));
+  transform-origin:center center;
+}
+.card-picker,.pack-picker{max-height:none !important;overflow:hidden !important}
+.joker-row{overflow:hidden !important;-webkit-overflow-scrolling:auto !important;scroll-snap-type:none !important}
 @media (max-width:520px){
  #app{max-width:none;border-radius:0;box-shadow:none}
  .modal-overlay{border-radius:0}
  .settings-fab{top:46px!important}
 }
-.screen{-webkit-overflow-scrolling:touch;overscroll-behavior:contain}
-.modal-box{max-height:86%;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .action-btn{min-height:52px}
 .sort-btn{min-width:48px;min-height:48px}
 .hub-btn{min-height:40px}
 .joker-slot,.consumable-slot{min-height:44px}
-.joker-row{-webkit-overflow-scrolling:touch;scroll-snap-type:x proximity}
-.joker-slot{scroll-snap-align:start}
 .card:active{transform:scale(.96)}
 .hand-container{min-height:120px;padding-bottom:6px}
 .action-row{padding-bottom:4px}
@@ -2045,6 +2064,76 @@ function updateJokerStates(selectedCards, scoringCards, handName) {
 // =========================================================================
 const screenContainer = document.getElementById('screen-container');
 
+// Keep every game state inside the visible viewport. The UI is allowed to
+// shrink as a whole when a device is unusually short, rather than forcing
+// the player to scroll. This preserves the layout and keeps controls visible.
+function fitViewportUI() {
+  const screen = screenContainer;
+  if (!screen) return;
+
+  // Reset first so measurements describe the natural layout.
+  screen.style.setProperty('--screen-fit', '1');
+  screen.style.width = '100%';
+  screen.style.height = '100%';
+
+  let scale = 1;
+  for (let i = 0; i < 4; i++) {
+    const availableH = Math.max(1, screen.clientHeight);
+    const availableW = Math.max(1, screen.clientWidth);
+    const contentH = Math.max(1, screen.scrollHeight);
+    const contentW = Math.max(1, screen.scrollWidth);
+    const next = Math.min(1, availableH / contentH, availableW / contentW);
+    if (Math.abs(next - scale) < 0.002) break;
+    scale = Math.max(0.72, next);
+    screen.style.setProperty('--screen-fit', String(scale));
+    screen.style.width = `calc(100% / ${scale})`;
+    screen.style.height = `calc(100% / ${scale})`;
+  }
+  screen.style.setProperty('--screen-fit', String(scale));
+  screen.style.width = `calc(100% / ${scale})`;
+  screen.style.height = `calc(100% / ${scale})`;
+
+  // Dialogs are independent of the screen container, so fit them too.
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    const box = overlay.querySelector('.modal-box');
+    if (!box) return;
+    box.style.setProperty('--modal-fit', '1');
+    box.style.transform = 'scale(1)';
+    const rect = box.getBoundingClientRect();
+    const naturalW = Math.max(1, rect.width);
+    const naturalH = Math.max(1, rect.height);
+    const maxW = Math.max(1, overlay.clientWidth - 20);
+    const maxH = Math.max(1, overlay.clientHeight - 20);
+    const modalScale = Math.max(0.62, Math.min(1, maxW / naturalW, maxH / naturalH));
+    box.style.setProperty('--modal-fit', String(modalScale));
+    box.style.transform = `scale(${modalScale})`;
+  });
+}
+
+let _fitRaf = 0;
+function scheduleViewportFit() {
+  cancelAnimationFrame(_fitRaf);
+  _fitRaf = requestAnimationFrame(() => {
+    requestAnimationFrame(fitViewportUI);
+  });
+}
+
+const viewportFitObserver = new MutationObserver(scheduleViewportFit);
+viewportFitObserver.observe(screenContainer, {childList:true, subtree:true});
+const appFitObserver = new MutationObserver(scheduleViewportFit);
+appFitObserver.observe(document.getElementById('app'), {childList:true, subtree:false});
+window.addEventListener('resize', scheduleViewportFit, {passive:true});
+window.addEventListener('orientationchange', () => setTimeout(scheduleViewportFit, 80), {passive:true});
+window.visualViewport?.addEventListener('resize', scheduleViewportFit, {passive:true});
+
+// Prevent iOS gesture scrolling/zooming even when the browser tries to handle
+// a gesture before CSS touch-action is applied. Normal taps still work.
+document.addEventListener('touchmove', e => e.preventDefault(), {passive:false});
+document.addEventListener('gesturestart', e => e.preventDefault(), {passive:false});
+document.addEventListener('gesturechange', e => e.preventDefault(), {passive:false});
+document.addEventListener('gestureend', e => e.preventDefault(), {passive:false});
+document.addEventListener('dblclick', e => e.preventDefault(), {passive:false});
+
 function render() {
   switch (AppState.currentScreen) {
     case 'BOOT': renderBoot(); break;
@@ -2059,6 +2148,7 @@ function render() {
     case 'DECK_VIEW': renderDeckView(); break;
     case 'HAND_LEVELS_VIEW': renderHandLevelsView(); break;
   }
+  scheduleViewportFit();
 }
 
 function renderBoot() {
