@@ -780,6 +780,104 @@ body{padding:0!important;min-height:100%;touch-action:manipulation;}
   .shop-rework>.primary{height:26px;min-height:26px!important;font-size:.52rem}
 }
 
+
+/* ===== SHOP LARGE-TEXT RESPONSIVE FIT =====
+   Use the available viewport instead of forcing a tiny fixed shop scale. */
+.shop-rework{
+  gap:clamp(5px,1.05vh,10px);
+  padding:clamp(4px,1vh,9px) clamp(4px,1.5vw,12px) clamp(4px,1vh,8px);
+}
+.shop-wallet{
+  min-height:clamp(42px,6.5vh,62px);
+  padding:clamp(6px,1vh,10px) clamp(9px,2vw,15px);
+}
+.shop-wallet .money{font-size:clamp(.95rem,2.5vw,1.25rem)}
+.shop-wallet .ante{font-size:clamp(.52rem,1.5vw,.68rem)}
+.shop-wallet>div:last-child{font-size:clamp(.44rem,1.25vw,.58rem)!important}
+
+/* The three sale sections share the available middle area. */
+.shop-rework>div:nth-child(2){
+  min-height:0!important;
+  display:flex!important;
+  flex-direction:column!important;
+  gap:clamp(4px,0.9vh,8px)!important;
+}
+.shop-rework>div:nth-child(2)>.shop-section{
+  flex:1 1 0;
+  min-height:0!important;
+  display:flex;
+  flex-direction:column;
+}
+.shop-section{padding:clamp(5px,1vh,9px);border-radius:clamp(10px,1.5vw,15px)}
+.shop-section-head{margin:0 2px clamp(3px,0.6vh,7px);min-height:clamp(18px,2.6vh,25px)}
+.shop-section-title{font-size:clamp(.62rem,1.9vw,.82rem);letter-spacing:.6px}
+.shop-section-sub{font-size:clamp(.42rem,1.35vw,.56rem)}
+.shop-grid{
+  flex:1;
+  min-height:0;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:clamp(4px,.9vw,8px);
+}
+.shop-card{
+  min-height:0!important;
+  height:auto!important;
+  padding:clamp(5px,1vh,9px);
+  border-radius:clamp(9px,1.5vw,13px);
+}
+.shop-card .shop-card-icon{font-size:clamp(1.25rem,4.8vw,2rem)}
+.shop-card .shop-card-name{font-size:clamp(.5rem,1.75vw,.72rem);line-height:1.08}
+.shop-card .shop-card-desc{
+  font-size:clamp(.42rem,1.45vw,.6rem);
+  line-height:1.2;
+  min-height:clamp(20px,3.2vh,32px);
+  -webkit-line-clamp:2;
+}
+.shop-card .shop-card-bottom{gap:clamp(3px,.8vw,6px)}
+.shop-price{font-size:clamp(.46rem,1.5vw,.66rem);padding:clamp(2px,.5vh,4px) clamp(4px,1vw,7px)}
+.shop-buy{height:clamp(27px,4.2vh,36px)!important;padding:clamp(4px,.7vh,7px) 5px!important;font-size:clamp(.45rem,1.45vw,.6rem)!important}
+
+.shop-rework>section.shop-section{
+  padding:clamp(4px,.8vh,7px);
+}
+.shop-rework>section.shop-section .shop-section-head{margin-bottom:clamp(3px,.6vh,6px)}
+.shop-jokers-grid{gap:clamp(3px,.8vw,6px)}
+.shop-joker-manage,.shop-empty-slot{
+  height:clamp(48px,7.5vh,76px)!important;
+  min-height:clamp(48px,7.5vh,76px)!important;
+  border-radius:clamp(7px,1.2vw,11px);
+  padding:clamp(2px,.5vh,5px);
+}
+.shop-joker-manage .joker-icon{font-size:clamp(.9rem,3vw,1.35rem)}
+.shop-joker-manage .joker-name{font-size:clamp(.34rem,1.2vw,.48rem);line-height:1.08}
+.shop-joker-manage .joker-pos{font-size:clamp(.32rem,1vw,.45rem)}
+.shop-joker-manage>span:last-child{font-size:clamp(.32rem,1vw,.44rem)!important}
+
+.shop-footer-actions{gap:clamp(4px,.8vw,7px)}
+.shop-footer-actions button{
+  height:clamp(30px,5vh,40px)!important;
+  min-height:clamp(30px,5vh,40px)!important;
+  padding:clamp(5px,.8vh,8px) 3px;
+  font-size:clamp(.46rem,1.45vw,.62rem);
+}
+.shop-rework>.primary{
+  height:clamp(34px,5.8vh,48px)!important;
+  min-height:clamp(34px,5.8vh,48px)!important;
+  padding:clamp(5px,.8vh,8px);
+  font-size:clamp(.58rem,1.9vw,.78rem);
+}
+
+/* On short phones, preserve readability first and let the whole screen fit if necessary. */
+@media(max-height:700px){
+  .shop-card .shop-card-desc{font-size:clamp(.4rem,1.35vw,.55rem)}
+  .shop-card .shop-card-name{font-size:clamp(.48rem,1.6vw,.66rem)}
+  .shop-rework>div:nth-child(2){gap:4px!important}
+}
+@media(min-width:600px){
+  .shop-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+  .shop-card .shop-card-name{font-size:.76rem}
+  .shop-card .shop-card-desc{font-size:.58rem}
+}
+
 </style>
 </head>
 <body>
@@ -4919,6 +5017,11 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
       name:'Neon Luck', bpm:118, moods:['shop','game'],
       chords:[[196,246.94,329.63,392],[220,277.18,369.99,440],[174.61,220,293.66,349.23],[196,261.63,329.63,415.3],[220,293.66,349.23,440],[185,233.08,293.66,369.99]],
       pad:['square','triangle'], bass:'square', pluck:'square', density:.62, warmth:.72
+    },
+    {
+      name:'Neon Carousel', bpm:124, moods:['shop'],
+      chords:[[261.63,329.63,392,523.25],[220,261.63,329.63,440],[174.61,220,261.63,349.23],[196,246.94,293.66,392]],
+      pad:['sine','triangle'], bass:'triangle', pluck:'triangle', density:.34, warmth:1.08, shopBeat:true, shopOnly:true
     }
   ];
 
@@ -4960,7 +5063,7 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
       }
       if(AppState.targetScore>0) v+=Math.min(.30,(AppState.score||0)/AppState.targetScore*.30);
     }else if(scr==='BLIND_SELECT'||scr==='ROUND_INIT') v=.12+Math.min(.18,((AppState.ante||1)-1)*.025);
-    else if(scr==='SHOP') v=.08;
+    else if(scr==='SHOP') v=.34;
     else if(scr==='ROUND_OVER') v=.16;
     else if(scr==='VICTORY') v=.22;
     else if(scr==='GAME_OVER') v=.10;
@@ -4970,6 +5073,12 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
   function chooseTrackForMood(mood,exclude){
     const pool=MUSIC_TRACKS.map((t,i)=>({t,i}))
       .filter(x=>x.t.moods.includes(mood)&&x.i!==exclude);
+    if(mood==='shop'){
+      // The shop has exactly one soundtrack. Never rotate to any other track
+      // while the player is shopping, even if more shop-tagged tracks exist.
+      const dedicated=MUSIC_TRACKS.map((t,i)=>({t,i})).find(x=>x.t.shopOnly);
+      if(dedicated) return dedicated.i;
+    }
     const fallback=MUSIC_TRACKS.map((t,i)=>({t,i})).filter(x=>x.i!==exclude);
     const list=pool.length?pool:fallback;
     // Favor tracks that haven't just played, but keep a little randomness.
@@ -5031,6 +5140,46 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
     o.start(t0);o.stop(t0+.68);
   }
 
+  function playShopBeat(track,pos,bus){
+    const c=ac(), now=c.currentTime;
+    const step=trackBeatMs(track)/1000;
+
+    // Peaceful carnival pulse: soft kick on every beat, with a light electronic
+    // tick on the offbeats. The rhythm stays deliberately predictable.
+    const kick=c.createOscillator(),kg=c.createGain(),kf=c.createBiquadFilter();
+    kick.type='sine';
+    kick.frequency.setValueAtTime(105,now);
+    kick.frequency.exponentialRampToValueAtTime(48,now+.09);
+    kf.type='lowpass'; kf.frequency.value=900;
+    kg.gain.setValueAtTime(.0001,now);
+    kg.gain.exponentialRampToValueAtTime(pos===0?.075:.052,now+.008);
+    kg.gain.exponentialRampToValueAtTime(.0001,now+.16);
+    kick.connect(kf); kf.connect(kg); kg.connect(bus);
+    kick.start(now); kick.stop(now+.19);
+
+    // Tiny electronic shaker on the eighth-note offbeats.
+    for(let h=0;h<2;h++){
+      const t=now+step*(h+.5);
+      const b=c.createBuffer(1,Math.floor(c.sampleRate*.035),c.sampleRate),d=b.getChannelData(0);
+      for(let i=0;i<d.length;i++) d[i]=(Math.random()*2-1)*Math.pow(1-i/d.length,3);
+      const src=c.createBufferSource(),f=c.createBiquadFilter(),g=c.createGain();
+      src.buffer=b; f.type='highpass'; f.frequency.value=5200;
+      g.gain.value=.0045; src.connect(f); f.connect(g); g.connect(bus); src.start(t);
+    }
+
+    // A soft toy-piano / bell-like backbeat gives it the carnival character.
+    if(pos===1||pos===3){
+      const o=c.createOscillator(),g=c.createGain(),f=c.createBiquadFilter();
+      o.type='triangle'; o.frequency.value=pos===1?659.25:783.99;
+      f.type='lowpass'; f.frequency.value=3200;
+      const d=now+step*.5;
+      g.gain.setValueAtTime(.0001,d);
+      g.gain.exponentialRampToValueAtTime(.018,d+.012);
+      g.gain.exponentialRampToValueAtTime(.0001,d+.24);
+      o.connect(f); f.connect(g); g.connect(bus); o.start(d); o.stop(d+.28);
+    }
+  }
+
   function playSoftPerc(track,pos,bus){
     // Extremely quiet noise ticks. Percussion is deliberately kept below the
     // harmonic bed so the game still feels like a game, not a music player.
@@ -5063,8 +5212,9 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
     const nextBus=c.createGain();nextBus.gain.value=.0001;nextBus.connect(musicBus);
     trackGain=nextBus;
     const now=c.currentTime;
-    const fadeBars=2;
-    const fadeSec=Math.max(2.0,trackBeatMs(currentTrack)*BEATS_PER_BAR*fadeBars/1000);
+    const fadeBars=1;
+    const involvesShop=currentTrack.moods.includes('shop') || (oldIndex>=0 && MUSIC_TRACKS[oldIndex].moods.includes('shop'));
+    const fadeSec=involvesShop ? 0.42 : Math.max(0.85,trackBeatMs(currentTrack)*BEATS_PER_BAR*fadeBars/1000);
     nextBus.gain.setValueAtTime(.0001,now);
     nextBus.gain.exponentialRampToValueAtTime(.72,now+fadeSec);
     if(oldBus){
@@ -5097,9 +5247,10 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
 
     if(mood!==lastMood){
       lastMood=mood;
-      // A screen change requests a compatible track, but never interrupts the
-      // current bar. The request is consumed at the next bar boundary.
+      // Screen changes transition immediately. This is especially important
+      // for the shop: its signature electronic track should arrive almost at once.
       beginTrackTransition(mood);
+      if(transitionQueued) applyPendingTrack();
       sceneTarget=mood==='shop'||mood==='menu'||mood==='victory'?1:0;
     }
 
@@ -5110,7 +5261,7 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
 
       // Tracks normally live for 8-16 bars. Faster-changing tracks are avoided
       // unless the screen itself changed, which keeps the soundtrack calm.
-      if(trackBars>=12 && Math.random()<.30) beginTrackTransition(mood);
+      if(mood!=='shop' && trackBars>=12 && Math.random()<.30) beginTrackTransition(mood);
       if(transitionQueued) applyPendingTrack();
     }
 
@@ -5123,40 +5274,52 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
       const padDur=beat*BEATS_PER_BAR/1000*1.12;
       const active=layerForIntensity();
 
-      // Core bed. This is always present and intentionally quiet.
-      playPad(currentChord,padDur,.028+active*.012,720+active*720,currentTrack,trackGain);
-      playBass(currentChord[0]/2,0,.030+active*.024,currentTrack,beat,trackGain);
+      if(mood==='shop'){
+        // The shop has a calm, repeating carnival motif rather than a random
+        // electronic pattern. The four chords and melody intentionally loop.
+        playPad(currentChord,padDur,.020,1500,currentTrack,trackGain);
+        playBass(currentChord[0]/2,0,.042,currentTrack,beat,trackGain);
+        playPluck(currentChord[1]*2,.03,.014,currentTrack,trackGain);
+      }else{
+        // Core bed. This is always present and intentionally quiet.
+        playPad(currentChord,padDur,.028+active*.012,720+active*720,currentTrack,trackGain);
+        playBass(currentChord[0]/2,0,.030+active*.024,currentTrack,beat,trackGain);
 
-      // A little higher melodic color only appears on stronger moments.
-      if(active>.20 && currentTrack.density>.28){
-        playPluck(currentChord[2]*2,.08,.008+active*.009,currentTrack,trackGain);
+        if(active>.20 && currentTrack.density>.28){
+          playPluck(currentChord[2]*2,.08,.008+active*.009,currentTrack,trackGain);
+        }
       }
     }
 
     if(pos===1 && currentChord){
       const active=layerForIntensity();
-      if(active>.18 && Math.random()<.22+currentTrack.density*.28){
-        const n=currentChord[(chordIndex+1)%currentChord.length]*(mood==='shop'?4:2);
+      if(mood==='shop'){
+        playPluck(currentChord[2]*2,.06,.014,currentTrack,trackGain);
+      }else if(active>.18 && Math.random()<.22+currentTrack.density*.28){
+        const n=currentChord[(chordIndex+1)%currentChord.length]*2;
         playPluck(n,.04,.007+active*.008,currentTrack,trackGain);
       }
     }
 
     if(pos===2 && currentChord){
       const active=layerForIntensity();
-      if(active>.32 && Math.random()<.18+currentTrack.density*.34){
+      if(mood==='shop'){
+        playBass(currentChord[0]/2,0,.034,currentTrack,trackBeatMs(currentTrack),trackGain);
+        playPluck(currentChord[3]*2,.08,.012,currentTrack,trackGain);
+      }else if(active>.32 && Math.random()<.18+currentTrack.density*.34){
         playBass(currentChord[0]/2,0,.018+active*.014,currentTrack,trackBeatMs(currentTrack),trackGain);
       }
-      if(mood==='shop' && Math.random()<.24){
-        playPluck(currentChord[(variation+2)%currentChord.length]*4,.015,.007,currentTrack,trackGain);
-      }
     }
 
-    if(pos===3 && currentChord && intensity>.42 && Math.random()<.14+currentTrack.density*.26){
-      playPluck(currentChord[Math.floor(Math.random()*currentChord.length)]*3,.035,.006+intensity*.005,currentTrack,trackGain);
+    if(pos===3 && currentChord && mood!=='shop' && intensity>.30 && Math.random()<.28+currentTrack.density*.30){
+      playPluck(currentChord[Math.floor(Math.random()*currentChord.length)]*3,.035,.007+intensity*.006,currentTrack,trackGain);
     }
 
-    // Percussion stays almost subliminal. It adds motion without taking over.
-    if((mood==='shop'||mood==='game') && (intensity>.18||currentTrack.density>.5)){
+    if(mood==='shop'){
+      // Shop music is intentionally much more rhythmic and energetic than the
+      // rest of the soundtrack. Every beat gets the signature pulse.
+      playShopBeat(currentTrack,pos,trackGain);
+    }else if((mood==='game') && (intensity>.18||currentTrack.density>.5)){
       playSoftPerc(currentTrack,pos,trackGain);
     }
 
@@ -5176,7 +5339,7 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
     sceneMix=sceneTarget=(mood==='shop'||mood==='menu'||mood==='victory')?1:0;
     lastMood=mood;lastScreen=typeof AppState!=='undefined'?AppState.currentScreen:'';
     trackGain=ac().createGain();trackGain.gain.value=.0001;trackGain.connect(musicBus);
-    trackGain.gain.exponentialRampToValueAtTime(.68,ac().currentTime+1.8);
+    trackGain.gain.exponentialRampToValueAtTime(.68,ac().currentTime+(mood==='shop'?0.18:1.8));
     musicStep();
   }
 
@@ -5194,9 +5357,32 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
     trackGain=null;transitionQueued=false;pendingTrackIndex=-1;
   }
 
+  // Keep the soundtrack alive for the entire run. iOS/Safari can suspend an
+  // AudioContext when the page is backgrounded, and long render transitions can
+  // otherwise leave the music scheduler stopped. The watchdog only restores
+  // music when the player has music enabled; it never overrides the setting.
+  let musicWatchdog=null;
+  function ensureMusicPlaying(){
+    if(!Settings.musicOn) return;
+    try{
+      const c=ac();
+      if(c.state==='suspended') c.resume().catch(()=>{});
+      if(!musicRunning) startMusic();
+      else if(!musicTimer) musicStep();
+    }catch(e){}
+  }
+  function startMusicWatchdog(){
+    if(musicWatchdog) return;
+    musicWatchdog=setInterval(()=>{
+      if(document.visibilityState==='visible') ensureMusicPlaying();
+    },1200);
+  }
+  startMusicWatchdog();
+
   window.__music={
     start:startMusic,stop:stopMusic,
-    next:function(){beginTrackTransition(getMusicMood());},
+    ensure:ensureMusicPlaying,
+    next:function(){ensureMusicPlaying();beginTrackTransition(getMusicMood());},
     getTrack:function(){return currentTrack?currentTrack.name:null;},
     getMood:getMusicMood,
     tracks:MUSIC_TRACKS.map(t=>t.name)
@@ -5358,6 +5544,7 @@ console.log('FINAL JOKER AUDIT',window.__jokerAudit,runJokerQATests());
   window.initAudioAndStart = function(){
     ac(); applyVol();
     if(Settings.musicOn) startMusic();
+    startMusicWatchdog();
     return __iaas();
   };
 })();
@@ -5389,7 +5576,14 @@ render();
   ['gesturestart','gesturechange'].forEach(e=>document.addEventListener(e,ev=>ev.preventDefault()));
   // keep screen awake, resave when app is backgrounded
   let wl;async function keep(){try{wl=await navigator.wakeLock?.request('screen');}catch(e){}}
-  document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')keep();else try{saveRun();}catch(e){}});
+  document.addEventListener('visibilitychange',()=>{
+    if(document.visibilityState==='visible'){
+      keep();
+      try{ window.__music?.ensure?.(); }catch(e){}
+    }else{
+      try{saveRun();}catch(e){}
+    }
+  });
   addEventListener('pagehide',()=>{try{saveRun();}catch(e){}});
   addEventListener('touchstart',keep,{once:true});
   // hint to install
