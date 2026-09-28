@@ -690,6 +690,96 @@ button,input,select,textarea{touch-action:none}
 .tag-row{display:flex;flex-wrap:wrap;gap:5px;justify-content:center;margin-bottom:6px}
 .tag-pill{font-size:.66rem;font-weight:800;padding:3px 8px;border-radius:9px;background:rgba(0,0,0,.35);border:1.5px solid var(--panel-line)}
 .undo-btn{min-height:40px}
+
+/* ================================================================
+   MOBILE SHOP FIT + iOS SAFE-AREA PASS
+   ================================================================ */
+html,body{background:#081c15!important;}
+body{padding:0!important;min-height:100%;touch-action:manipulation;}
+#app{
+  min-height:100%;
+  height:100dvh;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  border-radius:0;
+  box-shadow:none;
+}
+.screen{min-height:0;overflow:hidden!important;overscroll-behavior:none;}
+
+.shop-rework{
+  width:100%;height:100%;min-height:0;overflow:hidden;
+  display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;gap:6px;
+  padding:4px 4px 5px;
+}
+.shop-wallet{padding:6px 9px;border-radius:11px;min-height:42px;}
+.shop-wallet .money{font-size:.95rem}
+.shop-wallet .ante{font-size:.52rem}
+.shop-wallet>div:last-child{font-size:.44rem!important;line-height:1.15}
+.shop-rework>.shop-section:nth-of-type(-n+3){min-height:0;overflow:hidden;}
+.shop-section{padding:5px;border-radius:11px;min-height:0;}
+.shop-section-head{margin:0 2px 4px;min-height:16px;}
+.shop-section-title{font-size:.6rem;letter-spacing:.5px}
+.shop-section-sub{font-size:.42rem}
+.shop-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:4px;}
+.shop-card{min-height:91px;height:91px;padding:5px;border-radius:9px;border-width:1.5px;}
+.shop-card .shop-card-icon{font-size:1.35rem}
+.shop-card .shop-card-name{font-size:.48rem;line-height:1.05}
+.shop-card .shop-card-desc{font-size:.39rem;line-height:1.12;min-height:19px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.shop-card .shop-card-bottom{gap:3px}
+.shop-price{font-size:.44rem;padding:2px 4px;border-radius:8px}
+.shop-buy{padding:4px 3px!important;font-size:.43rem!important;min-height:0!important;height:25px!important;border-radius:7px!important;box-shadow:0 2px 0 var(--gold-dark)!important}
+.shop-voucher-note{display:none}
+.shop-rework>.shop-section:nth-of-type(4){padding:4px;}
+.shop-rework>.shop-section:nth-of-type(4) .shop-section-head{margin-bottom:3px}
+.shop-rework>.shop-section:nth-of-type(4) .shop-section-sub{font-size:.38rem}
+.shop-jokers-grid{grid-template-columns:repeat(6,minmax(0,1fr));gap:3px;}
+.shop-joker-manage,.shop-empty-slot{height:51px;min-height:51px;border-radius:7px;padding:2px;border-width:1px;}
+.shop-joker-manage .joker-icon{font-size:.9rem}
+.shop-joker-manage .joker-name{font-size:.33rem;margin-top:1px;line-height:1}
+.shop-joker-manage .joker-pos{font-size:.32rem;top:1px;left:2px}
+.shop-joker-manage>span:last-child{display:none}
+.shop-footer-actions{gap:4px}
+.shop-footer-actions button{padding:6px 2px;font-size:.45rem;min-height:30px!important;height:30px}
+.shop-rework>.primary{height:34px;min-height:34px!important;padding:5px;font-size:.62rem}
+
+@media(max-width:430px){
+  .shop-rework{padding-left:2px;padding-right:2px;gap:5px}
+  .shop-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:3px}
+  .shop-card{height:86px;min-height:86px;padding:4px}
+  .shop-card .shop-card-icon{font-size:1.2rem}
+  .shop-card .shop-card-name{font-size:.45rem}
+  .shop-card .shop-card-desc{font-size:.37rem;min-height:17px}
+  .shop-jokers-grid{grid-template-columns:repeat(6,minmax(0,1fr));}
+  .shop-joker-manage,.shop-empty-slot{height:47px;min-height:47px}
+}
+@media(max-width:380px){
+  .shop-wallet{min-height:38px;padding:5px 7px}
+  .shop-card{height:80px;min-height:80px}
+  .shop-card .shop-card-icon{font-size:1.05rem}
+  .shop-card .shop-card-name{font-size:.42rem}
+  .shop-card .shop-card-desc{font-size:.34rem;min-height:15px}
+  .shop-joker-manage,.shop-empty-slot{height:43px;min-height:43px}
+  .shop-joker-manage .joker-icon{font-size:.75rem}
+  .shop-rework>.primary{height:31px;min-height:31px!important}
+}
+@media(max-height:700px){
+  .shop-rework{gap:4px;padding-top:2px;padding-bottom:3px}
+  .shop-wallet{min-height:36px;padding:4px 8px}
+  .shop-section{padding:4px}
+  .shop-section-head{margin-bottom:2px}
+  .shop-card{height:76px;min-height:76px}
+  .shop-joker-manage,.shop-empty-slot{height:41px;min-height:41px}
+  .shop-rework>.primary{height:29px;min-height:29px!important}
+  .shop-footer-actions button{height:27px}
+}
+@media(max-height:600px){
+  .shop-card{height:68px;min-height:68px}
+  .shop-card .shop-card-icon{font-size:.9rem}
+  .shop-joker-manage,.shop-empty-slot{height:35px;min-height:35px}
+  .shop-joker-manage .joker-icon{font-size:.65rem}
+  .shop-rework>.primary{height:26px;min-height:26px!important;font-size:.52rem}
+}
+
 </style>
 </head>
 <body>
@@ -4350,41 +4440,32 @@ window.buyReworkedShopItem = function(i) {
 };
 
 window.renderShop = function() {
-  if (!AppState.shopItems || !AppState.shopItems.length) {
-    AppState.shopItems = generateReworkedShop();
-  }
+  if (!AppState.shopItems || !AppState.shopItems.length) AppState.shopItems = generateReworkedShop();
   refreshShopPrices();
 
   const jokers = AppState.shopItems.filter(x=>x.kind==='joker');
   const packs = AppState.shopItems.filter(x=>x.kind==='pack');
   const vouchers = AppState.shopItems.filter(x=>x.kind==='voucher');
 
-  const section = (title,sub,body) => `<section class="shop-section"><div class="shop-section-head">
-    <span class="shop-section-title">${title}</span><span class="shop-section-sub">${sub}</span></div>${body}</section>`;
-
   const cardFor = (item) => {
     const i = AppState.shopItems.indexOf(item);
     const discounted = shopDiscount()>0 && item.kind!=='voucher';
+    const action = item.kind==='pack' ? `openShopPack(${i})` : `buyReworkedShopItem(${i})`;
     return `<div class="shop-card ${item.kind==='joker'?'joker-card':''}${item.kind==='pack'?' pack-card':''}${item.kind==='voucher'?' voucher-card':''}" ${item.rarity?`data-rarity="${item.rarity}"`:''}>
       <span class="shop-card-icon">${item.icon}</span>
       <span class="shop-card-name">${item.name}</span>
       <span class="shop-card-desc">${item.desc}</span>
       <div class="shop-card-bottom">
         <span class="shop-price ${discounted?'discounted':''}">${discounted?'SALE ':''}$${item.cost}</span>
-        <button class="primary shop-buy" onclick="${item.kind==='pack'?`openShopPack(${i})`:`buyReworkedShopItem(${i})`}" ${AppState.money<item.cost?'disabled':''}>BUY</button>
+        <button class="primary shop-buy" onclick="${action}" ${AppState.money<item.cost?'disabled':''}>BUY</button>
       </div>
     </div>`;
   };
 
-  const jokerBody = jokers.length ? `<div class="shop-grid">${jokers.map(cardFor).join('')}</div>` :
-    `<div style="text-align:center;opacity:.5;padding:15px;font-size:.65rem">No Jokers for sale.</div>`;
-
-  const packBody = packs.length ? `<div class="shop-grid">${packs.map(cardFor).join('')}</div>` :
-    `<div style="text-align:center;opacity:.5;padding:15px;font-size:.65rem">No booster packs.</div>`;
-
-  const voucherBody = vouchers.length ? `<div class="shop-grid">${vouchers.map(cardFor).join('')}</div>
-    <div class="shop-voucher-note">Vouchers last for the rest of the run.</div>` :
-    `<div style="text-align:center;opacity:.5;padding:12px;font-size:.6rem">All available vouchers have been purchased.</div>`;
+  const compactSection = (title,sub,items,empty) => `<section class="shop-section shop-offer-section">
+    <div class="shop-section-head"><span class="shop-section-title">${title}</span><span class="shop-section-sub">${sub}</span></div>
+    ${items.length ? `<div class="shop-grid">${items.map(cardFor).join('')}</div>` : `<div style="text-align:center;opacity:.5;padding:5px;font-size:.48rem">${empty}</div>`}
+  </section>`;
 
   const jokerManage = AppState.jokers.length
     ? `<div class="shop-jokers-grid">${AppState.jokers.map((j,i)=>{
@@ -4400,17 +4481,21 @@ window.renderShop = function() {
 
   screenContainer.innerHTML = `<div class="shop-rework">
     <div class="shop-wallet"><div><div class="ante">ANTE ${AppState.ante} · SHOP</div><div class="money">💰 $${AppState.money}</div></div>
-      <div style="text-align:right;font-size:.52rem;opacity:.65">3 SECTIONS<br>JOKERS · BOOSTERS · VOUCHERS</div></div>
-    ${section('JOKERS','BUILD YOUR ENGINE',jokerBody)}
-    ${section('BOOSTER PACKS','PLAYING CARDS & JOKERS',packBody)}
-    ${section('VOUCHERS','PERMANENT UPGRADES',voucherBody)}
-    <section class="shop-section"><div class="shop-section-head"><span class="shop-section-title">YOUR JOKERS</span><span class="shop-section-sub">TAP A JOKER TO INSPECT · MOVE · SELL</span></div>${jokerManage}</section>
-    <div class="shop-footer-actions">
-      <button onclick="viewDeck()">🃏 DECK</button>
-      <button onclick="viewHandLevels()">📊 HAND LEVELS</button>
-      <button onclick="rerollReworkedShop()">🔄 REROLL $${voucherActive('rerollglut')?'0':voucherActive('reroll')?'1':'2'}</button>
+      <div style="text-align:right;font-size:.52rem;opacity:.65">BUY · MANAGE · CONTINUE</div></div>
+    <div style="min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:4px">
+      ${compactSection('JOKERS','BUILD YOUR ENGINE',jokers,'No Jokers for sale.')}
+      ${compactSection('BOOSTERS','PACKS',packs,'No booster packs.')}
+      ${compactSection('VOUCHERS','PERMANENT UPGRADES',vouchers,'All available vouchers purchased.')}
     </div>
-    <button class="primary" onclick="nextRound()">NEXT ROUND</button>
+    <section class="shop-section"><div class="shop-section-head"><span class="shop-section-title">YOUR JOKERS</span><span class="shop-section-sub">TAP TO MANAGE</span></div>${jokerManage}</section>
+    <div style="display:flex;flex-direction:column;gap:4px">
+      <div class="shop-footer-actions">
+        <button onclick="viewDeck()">🃏 DECK</button>
+        <button onclick="viewHandLevels()">📊 LEVELS</button>
+        <button onclick="rerollReworkedShop()">🔄 REROLL $${voucherActive('rerollglut')?'0':voucherActive('reroll')?'1':'2'}</button>
+      </div>
+      <button class="primary" onclick="nextRound()">NEXT ROUND</button>
+    </div>
   </div>`;
 };
 
